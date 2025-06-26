@@ -1,0 +1,103 @@
+/* Logo */
+.admin-logo {
+    height: 67px;
+    margin: 16px;
+    background: rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Header */
+.admin-header {
+    background: var(--header-bg-color) !important;
+    padding: 0;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Content */
+.admin-content {
+    /* margin: 24px 0px; */
+    background: var(--content-bg-color);
+    /* color: var(--content-text-color); */
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Menu */
+.ant-menu-dark .ant-menu-item-selected {
+    background-color: var(--menu-selected-bg-color) !important;
+}
+
+.ant-menu-item a {
+    color: var(--menu-text-color);
+    transition: color 0.3s ease;
+}
+
+.ant-menu-item-selected a {
+    color: var(--menu-selected-text-color) !important;
+}
+
+/* Light Theme Variables */
+:root.light-theme {
+    --header-bg-color: #f0f2f5;
+    --content-bg-color: #ffffff;
+    --content-text-color: #000000;
+    --menu-text-color: rgba(0, 0, 0, 0.65);
+    --menu-selected-bg-color: #1890ff;
+    --menu-selected-text-color: #ffffff;
+}
+
+/* Dark Theme Variables */
+:root.dark-theme {
+    --header-bg-color: #001529;
+    --content-bg-color: #141414;
+    --content-text-color: #ffffff;
+    --menu-text-color: rgba(255, 255, 255, 0.65);
+    --menu-selected-bg-color: #1890ff;
+    --menu-selected-text-color: #ffffff;
+}
+
+/* Thêm vào file AdminHome.css */
+.admin-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 24px;
+    background: var(--header-bg);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+}
+
+.user-dropdown {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0 12px;
+    transition: all 0.3s;
+}
+
+.user-dropdown:hover {
+    background: rgba(0, 0, 0, 0.025);
+}
+
+.theme-toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.theme-toggle-button:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.theme-icon {
+    vertical-align: middle;
+}

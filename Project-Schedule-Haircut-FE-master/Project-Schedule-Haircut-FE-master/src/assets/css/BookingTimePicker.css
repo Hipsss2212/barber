@@ -1,0 +1,116 @@
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.time-slot {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+}
+
+.time-slot:hover {
+    background: #f5f5f5;
+}
+
+.time-slot.active {
+    background: #0a2a7c;
+    color: white;
+    border-color: #0a2a7c;
+}
+
+.selected-time {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.nav-button {
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.back-button-time-picker {
+    background-color: #f0f0f0;
+    color: #555;
+}
+
+.back-button-time-picker:hover {
+    background-color: #e0e0e0;
+}
+
+.next-button {
+    background-color: #0a2a7c;
+    color: white;
+}
+
+.next-button:hover:not(:disabled) {
+    background-color: #1a3a9c;
+}
+
+.next-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Trong file BookingTimePicker.css */
+.loading-container-time-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    gap: 1rem;
+    padding: 20px 0;
+}
+
+.loading-container-time-picker p {
+    color: #0A2A7C;
+    font-weight: 500;
+}
+
+/* Thêm style cho nút khi đang loading */
+.time-slot:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.nav-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Responsive Design - Same as StylistPicker */
+@media (max-width: 480px) {
+    .date-picker-container {
+        padding: 15px;
+    }
+
+    .navigation-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-button {
+        width: 100%;
+    }
+}

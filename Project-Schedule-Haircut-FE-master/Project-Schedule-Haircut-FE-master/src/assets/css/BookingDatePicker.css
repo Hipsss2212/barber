@@ -1,0 +1,209 @@
+/* Main Container - Matching StylistPicker */
+.date-picker-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Title - Same style as StylistPicker */
+.date-picker-title {
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Date Picker - Matching Stylist Selector */
+.date-selector {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+/* Toggle - Same as Stylist selector */
+.date-toggle {
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.date-toggle:hover {
+    border-color: #0a2a7c;
+}
+
+.date-placeholder {
+    color: #555;
+    font-size: 16px;
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s ease;
+    color: #666;
+    font-size: 12px;
+}
+
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+/* Date List - Matching Stylist List */
+.date-list-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 5px;
+}
+
+/* Date Item - Matching Stylist Option */
+.date-option {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    justify-content: space-between;
+}
+
+.date-option:hover {
+    background-color: #f5f5f5;
+}
+
+.date-option.selected {
+    background-color: #f0f7ff;
+}
+
+
+.date-option.disabled {
+    pointer-events: none;
+    /* Không cho click */
+    opacity: 0.5;
+    /* Làm mờ đi */
+    cursor: not-allowed;
+    /* Khi hover hiện dấu "không cho phép" */
+}
+
+
+.date-info {
+    flex: 1;
+}
+
+.day-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 3px;
+}
+
+.date-number {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Status Badge - Similar to specialty in Stylist */
+.date-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-weekday {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-weekend {
+    background-color: #fce4ec;
+    color: #c2185b;
+}
+
+/* Selected Date Display - Matching Selected Stylist */
+.selected-date-display {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.selected-date-icon {
+    margin-right: 15px;
+    font-size: 20px;
+    color: #0a2a7c;
+}
+
+.selected-date-text {
+    font-weight: 600;
+    color: #0a2a7c;
+}
+
+/* Navigation Buttons - Same as StylistPicker */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.nav-button {
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.back-button-date-picker {
+    background-color: #f0f0f0;
+    color: #555;
+}
+
+.back-button-date-picker:hover {
+    background-color: #e0e0e0;
+}
+
+.next-button {
+    background-color: #0a2a7c;
+    color: white;
+}
+
+.next-button:hover:not(:disabled) {
+    background-color: #1a3a9c;
+}
+
+.next-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Responsive Design - Same as StylistPicker */
+@media (max-width: 480px) {
+    .date-picker-container {
+        padding: 15px;
+    }
+
+    .navigation-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-button {
+        width: 100%;
+    }
+}

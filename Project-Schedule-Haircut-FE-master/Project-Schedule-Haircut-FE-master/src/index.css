@@ -1,0 +1,386 @@
+/* Reset và base styles */
+html {
+    box-sizing: border-box;
+    font-size: 16px;
+    height: 100%;
+    user-select: none;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+#root {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+/* Layout chính */
+main {
+    flex: 1;
+    width: 100%;
+    padding: 1rem 0;
+}
+
+/* Container responsive */
+.container {
+    width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+}
+
+/* Cải thiện responsive cho các thành phần chung */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #0A2A7C;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Animation base */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.slide-up {
+    animation: slideUp 0.4s ease-out;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.hidden-mobile {
+    display: none;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-1 {
+    gap: 0.25rem;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-3 {
+    gap: 1rem;
+}
+
+.gap-4 {
+    gap: 1.5rem;
+}
+
+.gap-5 {
+    gap: 2rem;
+}
+
+.p-1 {
+    padding: 0.25rem;
+}
+
+.p-2 {
+    padding: 0.5rem;
+}
+
+.p-3 {
+    padding: 1rem;
+}
+
+.p-4 {
+    padding: 1.5rem;
+}
+
+.p-5 {
+    padding: 2rem;
+}
+
+.m-1 {
+    margin: 0.25rem;
+}
+
+.m-2 {
+    margin: 0.5rem;
+}
+
+.m-3 {
+    margin: 1rem;
+}
+
+.m-4 {
+    margin: 1.5rem;
+}
+
+.m-5 {
+    margin: 2rem;
+}
+
+/* Form elements */
+.input {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input:focus {
+    border-color: #0A2A7C;
+    box-shadow: 0 0 0 2px rgba(10, 42, 124, 0.2);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #0A2A7C;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1a3a9c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline {
+    border: 1px solid #0A2A7C;
+    color: #0A2A7C;
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background-color: #f0f4ff;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
+    }
+
+    .hidden-mobile {
+        display: block;
+    }
+
+    .hidden-desktop {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+        padding: 0 1.5rem;
+    }
+
+    main {
+        padding: 1.5rem 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px;
+    }
+}
+
+/* Loading states */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #0A2A7C;
+    width: 24px;
+    height: 24px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error states */
+.error-message {
+    color: #d32f2f;
+    background-color: #ffebee;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    border: 1px solid #ef9a9a;
+    margin-bottom: 1rem;
+}
+
+/* Empty states */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.empty-state svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+/* Card styles */
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+}

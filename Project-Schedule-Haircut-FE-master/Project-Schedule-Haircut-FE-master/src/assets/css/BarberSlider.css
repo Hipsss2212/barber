@@ -1,0 +1,146 @@
+.barber-slider {
+    margin: 20px 0;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.barber-slide {
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.barber-slider h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Container chính của Swiper */
+.swiper-container {
+    width: 100%;
+    padding: 20px 0;
+}
+
+/* Thiết lập cho mỗi slide */
+.swiper-slide {
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+
+/* Card styling - QUAN TRỌNG: Cố định chiều cao */
+.barber-card {
+    width: 100%;
+    max-width: 300px;
+    height: 400px;
+    /* Cố định chiều cao */
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.barber-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Phần hình ảnh - QUAN TRỌNG */
+.barber-image-container {
+    width: 100%;
+    height: 250px;
+    /* Cố định chiều cao ảnh */
+    overflow: hidden;
+}
+
+.barber-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Đảm bảo ảnh phủ kín container mà không bị méo */
+    transition: transform 0.3s ease;
+}
+
+.barber-card:hover .barber-image {
+    transform: scale(1.05);
+}
+
+/* Phần nội dung text */
+.barber-content {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.barber-card h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.barber-card p {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+/* Navigation buttons */
+.swiper-button-prev,
+.swiper-button-next {
+    color: #007bff;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+    font-size: 1.2rem;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+    color: #0056b3;
+    background: #f8f9fa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .barber-card {
+        height: 350px;
+        /* Giảm chiều cao trên mobile */
+    }
+
+    .barber-image-container {
+        height: 200px;
+    }
+
+    .barber-card h3 {
+        font-size: 1rem;
+    }
+
+    .barber-card p {
+        font-size: 0.8rem;
+    }
+
+    .swiper-button-prev,
+    .swiper-button-next {
+        display: none;
+        /* Ẩn navigation trên mobile */
+    }
+}

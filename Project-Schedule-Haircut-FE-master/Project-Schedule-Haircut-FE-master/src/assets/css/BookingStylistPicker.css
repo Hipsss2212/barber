@@ -1,0 +1,188 @@
+.stylist-picker-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.stylist-picker-title {
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.stylist-selector {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.selector-toggle {
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.selector-toggle:hover {
+    border-color: #0a2a7c;
+}
+
+.selector-placeholder {
+    color: #555;
+    font-size: 16px;
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s ease;
+    color: #666;
+    font-size: 12px;
+}
+
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+.stylist-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 5px;
+}
+
+.stylist-option {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.stylist-option:hover {
+    background-color: #f5f5f5;
+}
+
+.stylist-option.selected {
+    background-color: #f0f7ff;
+}
+
+.option-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.option-info {
+    flex: 1;
+}
+
+.option-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 3px;
+}
+
+.option-specialty {
+    font-size: 13px;
+    color: #666;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.nav-button {
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.back-button-stylist-picker {
+    background-color: #f0f0f0;
+    color: #555;
+}
+
+.back-button-stylist-picker:hover {
+    background-color: #e0e0e0;
+}
+
+.next-button {
+    background-color: #0a2a7c;
+    color: white;
+}
+
+.next-button:hover:not(:disabled) {
+    background-color: #1a3a9c;
+}
+
+.next-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .stylist-picker-container {
+        padding: 15px;
+    }
+
+    .navigation-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-button {
+        width: 100%;
+    }
+}
+
+/* Thêm vào BookingStylistPicker.css */
+.no-stylist-message {
+    padding: 15px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
+
+.spa-notice {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin: 15px 0;
+    color: #555;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-icon {
+    font-style: normal;
+    font-size: 16px;
+}

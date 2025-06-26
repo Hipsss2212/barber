@@ -1,0 +1,97 @@
+/* PaymentPage.css */
+.payment-page {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 20px;
+}
+
+.booking-info {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eaeaea;
+}
+
+.booking-info h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.info-label {
+    color: #7f8c8d;
+    min-width: 100px;
+    font-weight: 500;
+    margin-right: 15px;
+}
+
+.info-content {
+    flex: 1;
+    color: #34495e;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.service-badge,
+.staff-badge {
+    background: #f8f9fa;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    border: 1px solid #ececec;
+    display: inline-flex;
+    align-items: center;
+}
+
+.service-badge {
+    background-color: #e3f2fd;
+    border-color: #bbdefb;
+}
+
+.staff-badge {
+    background-color: #fff3e0;
+    border-color: #ffe0b2;
+}
+
+.payment-methods {
+    margin-bottom: 30px;
+}
+
+.method-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.method-options label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pay-button {
+    background: #0A2A7C;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}

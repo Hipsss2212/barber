@@ -1,0 +1,36 @@
+.booking-step {
+    padding: 20px;
+}
+
+.booking-step h2 {
+    color: #0a2a7c;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.no-services {
+    color: #666;
+    text-align: center;
+    padding: 20px;
+}
+
+.btn-next {
+    background: #0a2a7c;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.btn-next:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-next:hover:not(:disabled) {
+    background: #1a3a9c;
+}

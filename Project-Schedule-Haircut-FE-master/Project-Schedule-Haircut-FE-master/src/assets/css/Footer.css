@@ -1,0 +1,147 @@
+/* Footer Styles */
+.footer {
+    background-color: #002060;
+    color: #fff;
+    padding: 40px 0 20px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: auto;
+    width: 100%;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-column {
+    margin-bottom: 20px;
+}
+
+.footer-column p {
+    margin-bottom: 15px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-column p strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+.footer-column a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: inline-block;
+}
+
+.footer-column a:hover {
+    color: #a4e0ff;
+    text-decoration: underline;
+}
+
+/* App Links */
+.app-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.app-links img {
+    width: 120px;
+    height: auto;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.app-links img:hover {
+    transform: scale(1.05);
+}
+
+/* Social Links */
+.social-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.social-links img {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.3s ease;
+}
+
+.social-links img:hover {
+    transform: scale(1.1);
+}
+
+.social-links img[alt="DMCA"] {
+    width: auto;
+    height: 32px;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    margin-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .footer-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 30px 0 15px;
+    }
+
+    .footer-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .app-links img {
+        width: 110px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .footer-column {
+        margin-bottom: 15px;
+    }
+
+    .app-links {
+        flex-direction: row;
+    }
+
+    .app-links img {
+        width: 100px;
+    }
+
+    .social-links img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .social-links img[alt="DMCA"] {
+        height: 28px;
+    }
+}
