@@ -1,4 +1,4 @@
-package com.example.projectschedulehaircutserver.controller.maneger;
+package com.example.projectschedulehaircutserver.controller.manager;
 
 import com.example.projectschedulehaircutserver.exeption.CustomerException;
 import com.example.projectschedulehaircutserver.service.combo.ComboService;

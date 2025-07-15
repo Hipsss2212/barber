@@ -1,4 +1,4 @@
-package com.example.projectschedulehaircutserver.controller.maneger;
+package com.example.projectschedulehaircutserver.controller.manager;
 
 import com.example.projectschedulehaircutserver.entity.Coupons;
 import com.example.projectschedulehaircutserver.repository.CouponsRepo;
