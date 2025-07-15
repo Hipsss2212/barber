@@ -92,7 +92,7 @@ public class OrderServiceImpl implements OrderService{
                         .orderDate(request.getOrderDate())
                         .orderStartTime(request.getOrderStartTime())
                         .orderEndTime(calculatedEndTime)
-                        .status(0)
+                        .status(1) // tự động xác nhận
                         .haircutTime(request.getHaircutTime())
                         .totalPrice(totalOrder)
                         .customer(customer)
@@ -246,6 +246,24 @@ public class OrderServiceImpl implements OrderService{
     public void updateBookingStatus(Integer bookingId, Integer status) {
         Orders order = orderRepo.findOrderByOrderId(bookingId).orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
+        // Nếu là hủy lịch (status == -1) và do nhân viên thực hiện, kiểm tra thời gian
+        if (status == -1) {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime bookingDateTime = LocalDateTime.of(order.getOrderDate(), order.getOrderStartTime());
+            if (bookingDateTime.minusHours(1).isBefore(now)) {
+                throw new RuntimeException("Chỉ được phép hủy lịch trước giờ hẹn ít nhất 1 tiếng");
+            }
+            // Nếu đã xác nhận (status hiện tại là 1), gửi mail xin lỗi khách hàng
+            if (order.getStatus() == 1) {
+                String subject = "Xin lỗi, lịch hẹn của bạn đã bị hủy";
+                String content = "<p>Xin chào <strong>" + order.getCustomer().getFullName() + "</strong>,</p>" +
+                        "<p>Chúng tôi rất tiếc phải thông báo rằng lịch hẹn của bạn vào lúc " + order.getOrderStartTime() +
+                        " ngày " + order.getOrderDate() + " đã bị hủy do lý do bất khả kháng. Chúng tôi xin lỗi vì sự bất tiện này và mong bạn thông cảm.</p>" +
+                        "<p>Vui lòng liên hệ lại với salon để được hỗ trợ đặt lịch mới.</p>";
+                emailService.send(order.getCustomer().getEmail(), subject, content);
+            }
+        }
+
         Customer customer = order.getCustomer();
 
         String employeeName = order.getEmployees().stream()
@@ -318,6 +336,15 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public void cancelBooking(Integer bookingId, Integer status) {
         Orders orders = orderRepo.findOrderByOrderId(bookingId).orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        // Nếu khách hàng huỷ và trạng thái hiện tại là 1 (đã xác nhận), kiểm tra thời gian
+        if (orders.getStatus() == 1 && status == -1) {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime bookingDateTime = LocalDateTime.of(orders.getOrderDate(), orders.getOrderStartTime());
+            if (bookingDateTime.minusHours(1).isBefore(now)) {
+                throw new RuntimeException("Chỉ được phép hủy lịch trước giờ hẹn ít nhất 1 tiếng");
+            }
+        }
 
         orders.setStatus(status);
         orderRepo.save(orders);

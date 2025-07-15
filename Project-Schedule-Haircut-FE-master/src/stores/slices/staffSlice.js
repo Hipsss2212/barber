@@ -83,11 +83,11 @@ export const fetchPendingConfirmations = createAsyncThunk(
 
 export const confirmAppointment = createAsyncThunk(
     'staff/confirmAppointment',
-    async (appointmentId, { rejectWithValue }) => {
+    async ({ appointmentId, status }, { rejectWithValue }) => {
         try {
             const response = await axiosClient.put('/employee/action-order', {
                 orderId: appointmentId,
-                status: 1
+                status: status
             });
             return response;
         } catch (error) {

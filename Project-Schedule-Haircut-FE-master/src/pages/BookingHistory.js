@@ -124,7 +124,7 @@ const BookingHistory = () => {
 
                         {error ? (
                             <div className="error-message">
-                                Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.
+                                Có lỗi xảy ra khi tải dữ liệu: {typeof error === 'object' ? error.message || JSON.stringify(error) : error}
                             </div>
                         ) : bookings.length > 0 ? (
                             bookings.map((booking, index) => (
@@ -158,20 +158,8 @@ const BookingHistory = () => {
                                     </div>
                                     <div className="price-action">
                                         <span>{booking.totalPrice.toLocaleString()} VNĐ</span>
-                                        {activeStatus === 0 && !isWithinOneHour(booking.orderDate, booking.orderStartTime) && (
-                                            <button
-                                                onClick={() => handleCancel(booking.id, -1)}
-                                                disabled={cancelLoadingId === booking.id}
-                                                className="cancel-button"
-                                            >
-                                                {cancelLoadingId === booking.id ? (
-                                                    <ClipLoader size={20} color="#fff" />
-                                                ) : (
-                                                    'Huỷ lịch'
-                                                )}
-                                            </button>
-                                        )}
-                                        {activeStatus === 1 && (
+                                        {/* Nếu đã hoàn thành (status === 2) thì chỉ hiện nút Thanh toán, ẩn nút Huỷ lịch */}
+                                        {activeStatus === 1 && booking.status === 2 ? (
                                             <button
                                                 onClick={() => handlePayment(booking)}
                                                 disabled={paymentLoading === booking.id}
@@ -181,10 +169,34 @@ const BookingHistory = () => {
                                                     <ClipLoader size={20} color="#fff" />
                                                 ) : 'Thanh toán'}
                                             </button>
+                                        ) : (
+                                            // Nếu chưa hoàn thành thì vẫn hiện nút Huỷ lịch như cũ
+                                            (activeStatus === 0 || (activeStatus === 1 && !isWithinOneHour(booking.orderDate, booking.orderStartTime))) && (
+                                                <button
+                                                    onClick={() => handleCancel(booking.id, -1)}
+                                                    disabled={cancelLoadingId === booking.id}
+                                                    className="cancel-button"
+                                                >
+                                                    {cancelLoadingId === booking.id ? (
+                                                        <ClipLoader size={20} color="#fff" />
+                                                    ) : (
+                                                        'Huỷ lịch'
+                                                    )}
+                                                </button>
+                                            )
                                         )}
 
                                         {activeStatus === 2 && (
                                             <>
+                                                <button
+                                                    onClick={() => handlePayment(booking)}
+                                                    disabled={paymentLoading === booking.id}
+                                                    className="payment-button"
+                                                >
+                                                    {paymentLoading === booking.id ? (
+                                                        <ClipLoader size={20} color="#fff" />
+                                                    ) : 'Thanh toán'}
+                                                </button>
                                                 <button className="review-button" onClick={() => {
                                                     setSelectedEmployeeId(booking.employeeId);
                                                     setSelectedBooking(booking);

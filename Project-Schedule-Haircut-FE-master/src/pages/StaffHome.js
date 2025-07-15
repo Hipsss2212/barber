@@ -7,6 +7,7 @@ import '../assets/css/StaffHome.css';
 import useStaffService from '../services/staffService';
 import { toast } from 'react-toastify';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { parse, format } from 'date-fns';
 
 const StaffHome = () => {
     const [employeeInfo, setEmployeeInfo] = useState({
@@ -106,6 +107,40 @@ const StaffHome = () => {
 
     const toggleDropdown = () => setShowDropdown(!showDropdown);
 
+    // Thêm hàm kiểm tra có thể hủy (sửa lại cho chắc chắn)
+    const isCancelable = (appointment) => {
+      const now = new Date();
+      // Xử lý ngày: hỗ trợ dd/MM/yyyy, dd-MM-yyyy, yyyy-MM-dd
+      let dateStr = appointment.date;
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+        // dd/MM/yyyy -> yyyy-MM-dd
+        const [day, month, year] = dateStr.split('/');
+        dateStr = `${year}-${month}-${day}`;
+      } else if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+        // dd-MM-yyyy -> yyyy-MM-dd
+        const [day, month, year] = dateStr.split('-');
+        dateStr = `${year}-${month}-${day}`;
+      }
+      const startTime = appointment.time.split(' - ')[0];
+      // Đảm bảo có đủ 0 ở giờ/phút
+      const [h, m] = startTime.split(':');
+      const hh = h.padStart(2, '0');
+      const mm = m.padStart(2, '0');
+      const bookingDateTime = new Date(`${dateStr}T${hh}:${mm}:00`);
+      const timeDiff = bookingDateTime - now;
+      return appointment.status === 1 && timeDiff > 3600000;
+    };
+
+    // Thêm hàm hoàn thành lịch hẹn
+    const handleComplete = async (appointmentId) => {
+        try {
+            await confirmAppointment(appointmentId, true); // true: đánh dấu hoàn thành
+            toast.success('Đã hoàn thành lịch hẹn');
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
+
     console.log(loading, hourlyAppointments, bookingStats, pendingConfirmations);
 
     if (loading) {
@@ -141,6 +176,9 @@ const StaffHome = () => {
                     )}
                 </div>
             </div>
+
+            {/* Lịch làm việc của tôi */}
+            {/* <MyWorkSchedule /> */}
 
             <div className="stats-section">
                 <h2 className="stats-title">Tháng này</h2>
@@ -248,13 +286,22 @@ const StaffHome = () => {
                                                 {appointment.status === 1 ? 'Đã xác nhận' : 'Xác nhận'}
                                             </button>
                                             <button
-                                                className={`cancel-btn ${appointment.status === 1 ? 'disabled' : ''}`}
+                                                className={`cancel-btn ${!isCancelable(appointment) ? 'disabled' : ''}`}
                                                 onClick={() => handleCancel(appointment.id)}
-                                                disabled={appointment.status === 1}
+                                                disabled={!isCancelable(appointment)}
                                             >
                                                 <FiXCircle />
-                                                {appointment.status === 1 ? 'Không thể hủy' : 'Hủy'}
+                                                {!isCancelable(appointment) ? 'Không thể hủy' : 'Hủy'}
                                             </button>
+                                            {/* Nút hoàn thành */}
+                                            {appointment.status === 1 && (
+                                                <button
+                                                    className="complete-btn"
+                                                    onClick={() => handleComplete(appointment.id)}
+                                                >
+                                                    ✅ Hoàn thành
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

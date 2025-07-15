@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { staffLogin, staffLogout, clearStaffError, fetchBookingStats, fetchHourlyAppointments, fetchPendingConfirmations, cancelAppointment, confirmAppointment } from '../stores/slices/staffSlice';
+import { staffLogin, staffLogout, clearStaffError, fetchBookingStats, fetchHourlyAppointments, fetchPendingConfirmations, cancelAppointment, confirmAppointment as confirmAppointmentThunk } from '../stores/slices/staffSlice';
+import { clearAuth } from '../stores/slices/authSlice';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -31,6 +32,9 @@ const useStaffService = () => {
         try {
             dispatch(clearStaffError());
             const resultAction = await dispatch(staffLogout());
+
+            // Đăng xuất authSlice luôn
+            dispatch(clearAuth());
 
             if (staffLogout.fulfilled.match(resultAction)) {
                 toast.success('Đăng xuất thành công');
@@ -125,13 +129,16 @@ const useStaffService = () => {
         }
     };
 
-    const confirm = async (appointmentId) => {
+    // Bổ sung xác nhận hoàn thành
+    const confirmAppointment = async (appointmentId, isComplete = false) => {
         try {
             dispatch(clearStaffError());
-            const resultAction = await dispatch(confirmAppointment(appointmentId));
+            const status = isComplete ? 2 : 1;
+            const resultAction = await dispatch(
+                confirmAppointmentThunk({ appointmentId, status })
+            );
 
-            if (confirmAppointment.fulfilled.match(resultAction)) {
-                // Tự động refresh data sau khi thành công
+            if (confirmAppointmentThunk.fulfilled.match(resultAction)) {
                 getPendingConfirmations();
                 getStats();
                 return resultAction.payload;
@@ -169,7 +176,7 @@ const useStaffService = () => {
         getStats,
         getHourlyAppointments,
         getPendingConfirmations,
-        confirmAppointment: confirm,
+        confirmAppointment,
         cancelAppointment: cancel,
         staffSelector
     };

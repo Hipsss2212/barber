@@ -8,6 +8,7 @@ import BookingDateStep from '../components/BookingDatePicker';
 import BookingTimeStep from '../components/BookingTimePicker';
 import BookingConfirmation from '../components/BookingConfirmation';
 import '../assets/css/Booking.css';
+import { parse, format } from 'date-fns';
 
 const Booking = () => {
     const location = useLocation();
@@ -17,7 +18,7 @@ const Booking = () => {
     const [bookingData, setBookingData] = useState({
         services: location.state?.services || [],
         date: '',
-        time: '',
+        time: {}, // Change from string to object: {haircut: '09:00', spa: '09:30'}
         employees: [],
         selectedStylists: {
             haircut: null,
@@ -45,7 +46,6 @@ const Booking = () => {
     };
 
     const handleNextStep = (stepData) => {
-        // Update state based on step data
         setBookingData(prev => ({
             ...prev,
             ...(stepData.employees && { employees: stepData.employees }),
@@ -53,15 +53,11 @@ const Booking = () => {
                 selectedStylists: stepData.selectedStylists
             }),
             ...(stepData.date && { date: stepData.date }),
-            ...(stepData.time && { time: stepData.time })
+            ...(stepData.time && { time: { ...prev.time, ...stepData.time } }) // Merge per-service time
         }));
-
-        // Update spa service flag if provided
         if (stepData.hasSpaService !== undefined) {
             setHasSpaService(stepData.hasSpaService);
         }
-
-        // Move to next step
         setCurrentStep(prev => prev + 1);
     };
 
@@ -73,7 +69,7 @@ const Booking = () => {
         // Here you would typically send the booking data to your API
         console.log('Booking completed:', {
             services: bookingData.services,
-            stylists: Object.values(bookingData.selectedStylists).filter(Boolean),
+            stylists: bookingData.selectedStylists,
             date: bookingData.date,
             time: bookingData.time
         });
@@ -83,7 +79,7 @@ const Booking = () => {
             state: {
                 bookingData: {
                     ...bookingData,
-                    selectedStylists: Object.values(bookingData.selectedStylists).filter(Boolean)
+                    selectedStylists: bookingData.selectedStylists
                 }
             }
         });
@@ -131,10 +127,10 @@ const Booking = () => {
             component: (
                 <BookingTimeStep
                     time={bookingData.time}
-                    setTime={(time) => setBookingData(prev => ({ ...prev, time }))}
+                    setTime={(timeObj) => setBookingData(prev => ({ ...prev, time: { ...prev.time, ...timeObj } }))}
                     onNext={() => handleNextStep({})}
                     onBack={handlePrevStep}
-                    employees={Object.values(bookingData.selectedStylists).filter(Boolean)}
+                    employees={bookingData.selectedStylists}
                     selectedDate={bookingData.date}
                 />
             )
@@ -144,8 +140,15 @@ const Booking = () => {
             component: (
                 <BookingConfirmation
                     services={bookingData.services}
-                    stylists={Object.values(bookingData.selectedStylists).filter(Boolean)}
-                    date={bookingData.date}
+                    stylists={bookingData.selectedStylists}
+                    date={bookingData.date && /^\d{4}-\d{2}-\d{2}$/.test(bookingData.date)
+                        ? bookingData.date
+                        : (bookingData.date ? format(
+                            typeof bookingData.date === 'string' && bookingData.date.includes('-') && bookingData.date.trim().length === 14
+                                ? parse(bookingData.date, 'dd - MM - yyyy', new Date())
+                                : new Date(bookingData.date),
+                            'yyyy-MM-dd'
+                        ) : '')}
                     time={bookingData.time}
                     onBack={handlePrevStep}
                     onConfirm={handleBookingComplete}

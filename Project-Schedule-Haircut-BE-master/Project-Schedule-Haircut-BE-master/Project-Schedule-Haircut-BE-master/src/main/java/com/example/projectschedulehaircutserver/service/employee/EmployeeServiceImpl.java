@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -168,7 +169,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         }
     }
 
-    // lấy danh sách lịch hẹn cần xác nhận
+    // lấy danh sách lịch hẹn cần xác nhận và đã xác nhận (sắp tới)
     @Override
     public List<EmployeeAppointmentNeedsConfirmationResponse> getAppointmentsNeedsConfirmation() throws LoginException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -181,6 +182,7 @@ public class EmployeeServiceImpl implements EmployeeService{
                 Map<Integer, EmployeeAppointmentNeedsConfirmationResponse> resultMap = new LinkedHashMap<>();
 
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDateTime now = LocalDateTime.now();
 
                 for (Object[] row : rawData) {
                     Orders order = (Orders) row[0];
@@ -188,6 +190,16 @@ public class EmployeeServiceImpl implements EmployeeService{
                     String serviceName = (String) row[2];
 
                     Integer orderId = order.getId();
+
+                    // Chỉ lấy lịch status = 0 hoặc status = 1 (chưa hoàn thành/thanh toán), và còn trong tương lai
+                    boolean isUpcoming = false;
+                    if (order.getStatus() == 0 || order.getStatus() == 1) {
+                        LocalDateTime bookingDateTime = LocalDateTime.of(order.getOrderDate(), order.getOrderStartTime());
+                        if (bookingDateTime.isAfter(now)) {
+                            isUpcoming = true;
+                        }
+                    }
+                    if (!isUpcoming) continue;
 
                     resultMap.computeIfAbsent(orderId, id ->
                             new EmployeeAppointmentNeedsConfirmationResponse(

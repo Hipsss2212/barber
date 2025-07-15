@@ -1,4 +1,4 @@
-=import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import '../assets/css/PaymentReturn.css'; // Đường dẫn đến file CSS của bạn

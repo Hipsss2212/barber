@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { FaChevronDown, FaCalendarAlt } from 'react-icons/fa';
 import '../assets/css/BookingDatePicker.css';
+import { format } from 'date-fns';
 
 const BookingDatePicker = ({ selectedDate, onSelect, onNext, onBack }) => {
     const [dateOptions, setDateOptions] = useState([]);
@@ -22,11 +23,13 @@ const BookingDatePicker = ({ selectedDate, onSelect, onNext, onBack }) => {
                 year: 'numeric'
             }).replace(/\//g, ' - ');
 
+            const isoDate = format(date, 'yyyy-MM-dd');
             const isWeekend = date.getDay() === 0 || date.getDay() === 6; 
 
             options.push({
                 dayName,
-                date: formattedDate,
+                date: formattedDate, // dùng cho hiển thị
+                isoDate, // dùng cho backend
                 isWeekend,
                 disabled: false, // Cho phép chọn tất cả 7 ngày
             });
@@ -71,12 +74,12 @@ const BookingDatePicker = ({ selectedDate, onSelect, onNext, onBack }) => {
                             <div
                                 key={index}
                                 className={`date-option 
-                                    ${selectedDate === date.date ? 'selected' : ''} 
+                                    ${(selectedDate === date.isoDate || selectedDate === date.date) ? 'selected' : ''} 
                                     ${date.disabled ? 'disabled' : ''}
                                 `}
                                 onClick={() => {
                                     if (!date.disabled) {
-                                        onSelect(date.date);
+                                        onSelect(date.isoDate); // truyền đúng yyyy-MM-dd cho backend
                                         setShowDateList(false);
                                     }
                                 }}
@@ -98,7 +101,7 @@ const BookingDatePicker = ({ selectedDate, onSelect, onNext, onBack }) => {
                 <div className="selected-date-display">
                     <FaCalendarAlt className="selected-date-icon" />
                     <div className="selected-date-text">
-                        Ngày đã chọn: {selectedDate}
+                        Ngày đã chọn: {dateOptions.find(d => d.isoDate === selectedDate)?.date || selectedDate}
                     </div>
                 </div>
             )}

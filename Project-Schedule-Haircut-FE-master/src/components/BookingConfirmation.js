@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import '../assets/css/BookingConfirmation.css';
 import useOrderService from '../services/orderService';
@@ -6,87 +6,51 @@ import { parse, format } from 'date-fns';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 const BookingConfirmation = ({ services, stylists, date, time, onBack }) => {
+    // stylists: {haircut: {...}, spa: {...}}
+    // time: {haircut: '09:00', spa: '09:30'}
     const totalPrice = services.reduce((sum, service) => sum + service.price, 0);
     const totalTime = services.reduce((sum, service) => sum + (service.haircutTime || 0), 0);
     const { loading, error, successMessage } = useSelector(state => state.order);
     const { order } = useOrderService();
 
-    // Hàm chuyển đổi định dạng ngày từ "dd - MM - yyyy" hoặc "dd/MM/yyyy" sang "yyyy-MM-dd"
-    const formatDateForBackend = (dateString) => {
-        if (!dateString) return '';
-        try {
-            // Nếu là dạng 'dd - MM - yyyy'
-            if (/\d{2} - \d{2} - \d{4}/.test(dateString)) {
-                const parsedDate = parse(dateString, 'dd - MM - yyyy', new Date());
-                return format(parsedDate, 'yyyy-MM-dd');
-            }
-            // Nếu là dạng 'dd/MM/yyyy'
-            if (/\d{2}\/\d{2}\/\d{4}/.test(dateString)) {
-                const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
-                return format(parsedDate, 'yyyy-MM-dd');
-            }
-            // Nếu là dạng 'yyyy-MM-dd' thì trả về luôn
-            if (/\d{4}-\d{2}-\d{2}/.test(dateString)) {
-                return dateString;
-            }
-            // Nếu là Date object
-            if (dateString instanceof Date && !isNaN(dateString)) {
-                return format(dateString, 'yyyy-MM-dd');
-            }
-            // Fallback: thử parse bằng Date
-            const d = new Date(dateString);
-            if (!isNaN(d)) {
-                return format(d, 'yyyy-MM-dd');
-            }
-            console.error('Error formatting date: Invalid date value', dateString);
-            return '';
-        } catch (error) {
-            console.error('Error formatting date:', error);
-            return '';
-        }
-    };
-
+    // Prepare order data for backend
+    const serviceIds = services.map(service => service.id); // luôn là mảng
+    const employeeIds = Object.values(stylists).map(stylist => stylist?.id).filter(Boolean); // luôn là mảng
+    // Lấy giờ bắt đầu sớm nhất trong các time đã chọn
+    const timesArr = Object.values(time).filter(Boolean);
+    const orderStartTime = timesArr.length > 0 ? timesArr.sort()[0] : null;
     const [orderData, setOrderData] = useState({
-        orderDate: formatDateForBackend(date), // Định dạng lại ngày trước khi lưu
-        orderStartTime: `${time}`,
+        orderDate: date && /^\d{4}-\d{2}-\d{2}$/.test(date)
+            ? date
+            : (date ? format(
+                typeof date === 'string' && date.includes('-') && date.trim().length === 14
+                    ? parse(date, 'dd - MM - yyyy', new Date())
+                    : new Date(date),
+                'yyyy-MM-dd'
+            ) : ''),
+        orderStartTime: orderStartTime,
         totalPrice: totalPrice,
         haircutTime: totalTime,
         comboId: null,
-        serviceId: new Set(services.map(service => service.id)),
-        employeeId: new Set(stylists.map(stylist => stylist.id)),
+        serviceId: serviceIds, // luôn là mảng
+        employeeId: employeeIds // luôn là mảng
     });
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setOrderData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+    useEffect(() => {
+        // Log để kiểm tra dữ liệu gửi lên
+        console.log('orderData gửi lên:', orderData);
+    }, [orderData]);
 
     const handleConfirm = async () => {
         try {
-            // Chuyển Set thành Array trước khi gửi đi
-            const payload = {
-                ...orderData,
-                serviceId: Array.from(orderData.serviceId),
-                employeeId: Array.from(orderData.employeeId),
-                // Đảm bảo ngày đã được định dạng đúng
-                orderDate: formatDateForBackend(orderData.orderDate),
-                orderStartTime: orderData.orderStartTime
-            };
-
-            await order(payload);
+            await order(orderData);
         } catch (error) {
             console.error('Error confirming booking:', error);
         }
     };
 
-
     return (
         <div className="booking-step">
             <h2>5. Xác nhận thông tin</h2>
-
             <div className="confirmation-section">
                 <h3>Dịch vụ đã chọn</h3>
                 <ul className="service-list-confirmation">
@@ -94,48 +58,19 @@ const BookingConfirmation = ({ services, stylists, date, time, onBack }) => {
                         <li key={index}>
                             <span className="service-name">{service.name}</span>
                             <span className="service-price">{service.price.toLocaleString()}₫</span>
+                            <span className="service-stylist">Thợ: {stylists[service.categoryType]?.fullName || 'N/A'}</span>
+                            <span className="service-time">Giờ: {time[service.categoryType] || 'N/A'}</span>
                         </li>
                     ))}
                 </ul>
-
                 <div className="service-total">
                     <span className="total-label">Tổng cộng:</span>
                     <span className="total-price">{totalPrice.toLocaleString()}₫</span>
                 </div>
             </div>
-
-            <div className="confirmation-section">
-                <h3>Thông tin stylist</h3>
-                <div className="stylist-info">
-                    {stylists.map((stylist, index) => (
-                        <div className="stylist-item" key={index}>
-                            <img
-                                src={stylist.avatar || 'default-avatar.png'}
-                                alt={stylist.fullName}
-                                className="stylist-photo"
-                                onError={(e) => {
-                                    e.target.src = 'default-avatar.png';
-                                }}
-                            />
-                            <h4 className="stylist-name">{stylist.fullName}</h4>
-                        </div>
-                    ))}
-                </div>
+            <div className="time-total">
+                Tổng thời gian sử dụng dịch vụ: <strong>{totalTime} phút</strong>
             </div>
-
-            <div className="time-section">
-                <div className="time-title">Thời gian đến</div>
-                <div className="time-display">
-                    <span>{date}</span>
-                    <span>lúc</span>
-                    <span>{time}</span>
-                </div>
-
-                <div className="time-total">
-                    Tổng thời gian sử dụng dịch vụ: <strong>{totalTime} phút</strong>
-                </div>
-            </div>
-
             <div className="step-actions">
                 <button className="btn-back" onClick={onBack} disabled={loading}>
                     Quay lại
@@ -161,7 +96,6 @@ const BookingConfirmation = ({ services, stylists, date, time, onBack }) => {
                     )}
                 </button>
             </div>
-
             <div className="confirmation-note">
                 <p>Cắt xong trả tiền, hủy lịch không sao</p>
             </div>
