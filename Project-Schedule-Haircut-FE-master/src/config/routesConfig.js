@@ -23,6 +23,7 @@ import VerifyEmail from '../components/VerifyEmail';
 import { Navigate } from 'react-router-dom';
 import AboutUs from '../pages/AboutUs';
 import CouponManagement from '../components/CouponManagement';
+import EmployeeProfile from '../pages/EmployeeProfile';
 
 const routes = [
     {
@@ -132,6 +133,17 @@ const routes = [
             </PrivateRoute>
         ),
         private: false,
+    },
+    {
+        path: '/employee/profile',
+        element: (
+            <PrivateRoute requiredRole="ROLE_EMPLOYEE">
+                <MainLayout>
+                    <EmployeeProfile />
+                </MainLayout>
+            </PrivateRoute>
+        ),
+        private: true,
     },
     {
         path: '/admin/*',

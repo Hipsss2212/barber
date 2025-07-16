@@ -7,6 +7,7 @@ import com.example.projectschedulehaircutserver.response.EmployeeAppointmentByHo
 import com.example.projectschedulehaircutserver.response.EmployeeAppointmentNeedsConfirmationResponse;
 import com.example.projectschedulehaircutserver.response.EmployeeBookedStaffResponse;
 import com.example.projectschedulehaircutserver.response.TotalPriceByEmployeeAndDayResponse;
+import com.example.projectschedulehaircutserver.entity.Employee;
 
 import java.util.List;
 import java.util.Set;
@@ -25,4 +26,8 @@ public interface EmployeeService {
     List<EmployeeAppointmentNeedsConfirmationResponse> getAppointmentsNeedsConfirmation() throws LoginException;
 
     void updateEmployee(Integer id, EmployeeDTO employeeDTO);
+
+    Employee findByUsername(String username);
+
+    void updateEmployeeProfile(EmployeeDTO employeeDTO);
 }

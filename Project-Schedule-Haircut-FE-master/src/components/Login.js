@@ -9,6 +9,7 @@ import { initializeAuth } from '../stores/slices/authSlice';
 import useCartService from '../services/cartService';
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) => {
     const [credentials, setCredentials] = useState({
@@ -54,7 +55,10 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
                 }));
 
                 toast.success('Đăng nhập thành công!');
-                await fetchItemCount();
+                // Chỉ gọi fetchItemCount nếu không phải nhân viên
+                if (user.role !== 'ROLE_EMPLOYEE') {
+                    await fetchItemCount();
+                }
                 if (user.role === 'ROLE_ADMIN') {
                     window.location.href = '/admin';
                 } else if (user.role === 'ROLE_EMPLOYEE') {
@@ -181,10 +185,10 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
             </div>
 
             {/* Tạm thời ẩn Google Login để tránh lỗi 403 */}
-            {/* <GoogleLogin
+            <GoogleLogin
                 onSuccess={handleGoogleLogin}
                 onError={() => toast.error('Đăng nhập Google thất bại!')}
-            /> */}
+            />
         </div>
     );
 };

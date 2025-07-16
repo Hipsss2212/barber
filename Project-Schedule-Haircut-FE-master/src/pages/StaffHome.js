@@ -8,6 +8,7 @@ import useStaffService from '../services/staffService';
 import { toast } from 'react-toastify';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { parse, format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 const StaffHome = () => {
     const [employeeInfo, setEmployeeInfo] = useState({
@@ -16,6 +17,7 @@ const StaffHome = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
     const { logout, getStats, getHourlyAppointments, getPendingConfirmations, confirmAppointment, cancelAppointment, staffSelector } = useStaffService();
+    const navigate = useNavigate();
 
     const { loading, hourlyAppointments, bookingStats, pendingConfirmations } = staffSelector;
 
@@ -163,7 +165,7 @@ const StaffHome = () => {
 
                     {showDropdown && (
                         <div className={`dropdown-menu ${showDropdown ? 'active' : ''}`}>
-                            <div className="dropdown-item">
+                            <div className="dropdown-item" onClick={() => { navigate('/employee/profile'); setShowDropdown(false); }}>
                                 <FiUser className="dropdown-icon" />
                                 Thông tin cá nhân
                             </div>

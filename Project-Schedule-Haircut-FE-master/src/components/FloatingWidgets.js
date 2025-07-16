@@ -9,6 +9,7 @@ import useAIService from '../services/aiService';
 import { toast } from 'react-toastify';
 import { addMessage } from '../stores/slices/aiSlice';
 import { useDispatch } from 'react-redux';
+import Cookies from 'js-cookie';
 import Webcam from 'react-webcam';
 
 const ChatBox = ({ onClose }) => {
@@ -347,6 +348,7 @@ const ChatBox = ({ onClose }) => {
 const FloatingWidgets = () => {
     const [showChat, setShowChat] = useState(false);
     const navigate = useNavigate();
+    const userRole = Cookies.get('role');
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -374,13 +376,16 @@ const FloatingWidgets = () => {
                 <img src={botImg} alt="Chatbot" />
             </div>
 
-            <div
-                className="circle-btn outline"
-                onClick={handleBarberClick}
-            >
-                <img src={barberImg} alt="Barber" />
-                <CountService />
-            </div>
+            {/* Chỉ hiển thị nút cart nếu không phải nhân viên */}
+            {userRole !== 'ROLE_EMPLOYEE' && (
+                <div
+                    className="circle-btn outline"
+                    onClick={handleBarberClick}
+                >
+                    <img src={barberImg} alt="Barber" />
+                    <CountService />
+                </div>
+            )}
         </div>
     );
 };

@@ -6,6 +6,7 @@ import '../assets/css/Header.css';
 import { useAuth } from '../stores/context/AuthContext';
 import useAuthService from '../services/authService';
 import useCartService from '../services/cartService';
+import Cookies from 'js-cookie';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Header = () => {
     const { username, isAuthenticated } = useAuth();
     const { fetchItemCount } = useCartService();
     const { logout } = useAuthService();
+    const userRole = Cookies.get('role');
 
     const logoImage = 'https://photo-zmp3.zadn.vn/avatars/f/8/6/3/f863996f0e5e8b56b97856950b1ce023.jpg';
 
@@ -47,7 +49,10 @@ const Header = () => {
     const handleLogout = async () => {
         try {
             await logout();
-            await fetchItemCount();
+            // Chỉ gọi fetchItemCount nếu không phải nhân viên
+            if (userRole !== 'ROLE_EMPLOYEE') {
+                await fetchItemCount();
+            }
             setShowDropdown(false);
         } catch (error) {
             console.error('Logout error:', error);

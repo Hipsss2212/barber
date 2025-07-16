@@ -110,6 +110,21 @@ public class EmployeeServiceImpl implements EmployeeService{
         employeeRepo.save(employee);
     }
 
+    @Override
+    @Transactional
+    public void updateEmployeeProfile(EmployeeDTO employeeDTO) {
+        Employee employee = employeeRepo.findByEmployeeUsername(employeeDTO.getUserName())
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên"));
+        if (employeeDTO.getFullName() != null) employee.setFullName(employeeDTO.getFullName());
+        if (employeeDTO.getEmail() != null) employee.setEmail(employeeDTO.getEmail());
+        if (employeeDTO.getPhone() != null) employee.setPhone(employeeDTO.getPhone());
+        if (employeeDTO.getAddress() != null) employee.setAddress(employeeDTO.getAddress());
+        if (employeeDTO.getAvatar() != null) employee.setAvatar(employeeDTO.getAvatar());
+        if (employeeDTO.getAge() != null) employee.setAge(employeeDTO.getAge());
+        // Có thể cập nhật thêm các trường khác nếu cần
+        employeeRepo.save(employee);
+    }
+
     // hiển thị danh sách nhân viên
     @Override
     public Set<EmployeeDTO> showAllEmployee() {
@@ -222,6 +237,11 @@ public class EmployeeServiceImpl implements EmployeeService{
         } else {
             throw new LoginException("Bạn Chưa Đăng Nhập");
         }
+    }
+
+    @Override
+    public Employee findByUsername(String username) {
+        return employeeRepo.findByEmployeeUsername(username).orElse(null);
     }
 
     private String formatTime(LocalTime start, LocalTime end) {

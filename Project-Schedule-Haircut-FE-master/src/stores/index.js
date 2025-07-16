@@ -13,6 +13,7 @@ import timeReducer from './slices/timeSlice';
 import staffReducer from './slices/staffSlice';
 import aiReducer from './slices/aiSlice';
 import managementReducer from './slices/managementSlice';
+import employeeProfileReducer from './slices/employeeProfileSlice';
 
 const store = configureStore({
     reducer: {
@@ -30,6 +31,7 @@ const store = configureStore({
         staff: staffReducer,
         ai: aiReducer,
         management: managementReducer,
+        employeeProfile: employeeProfileReducer,
     },
 });
 
