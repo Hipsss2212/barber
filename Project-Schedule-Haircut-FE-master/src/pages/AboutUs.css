@@ -1,17 +1,94 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
 
 :root {
-  --main-black: #181818;
-  --main-gold: #c9a063;
+  --main-black: #222;
+  --main-gold: #ffe259;
   --main-white: #fff;
-  --main-gray: #f5f5f5;
-  --main-dark-gray: #232323;
+  --main-gray: #f8f9fa;
+  --main-dark-gray: #e9ecef;
+  --main-blue: #00c3ff;
+  --main-yellow: #ffe259;
 }
 
-body, .about-us-page {
+body, .about-us-page, .aboutus-root {
   font-family: 'Montserrat', Arial, sans-serif;
-  background: var(--main-gray);
-  color: var(--main-black);
+  background: linear-gradient(120deg, #fff 0%, #f8f9fa 100%);
+  color: #222;
+  animation: aboutGradientMove 8s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes aboutGradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.banner.aboutus-banner, .aboutus-hero {
+  background: linear-gradient(120deg, #fff 0%, #e9ecef 100%);
+  background-size: 200% 200%;
+  animation: aboutGradientMove 8s ease-in-out infinite;
+}
+
+.banner-overlay, .aboutus-hero-overlay {
+  background: linear-gradient(90deg, rgba(0,195,255,0.12) 60%, rgba(255,226,89,0.10) 100%);
+  background-size: 200% 200%;
+  animation: aboutGradientMove 8s ease-in-out infinite;
+}
+
+.banner-title, .aboutus-hero-content h1, .title-wrapper h2, .intro-content h2 {
+  background: linear-gradient(90deg, #00c3ff 0%, #ffe259 100%);
+  background-size: 200% 200%;
+  animation: aboutGradientMove 8s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  font-weight: 900;
+}
+
+.cta-btn, .aboutus-cta-btn, .like-btn, .share-btn, .subscribe-btn {
+  background: linear-gradient(90deg, #00c3ff 0%, #ffe259 100%);
+  background-size: 200% 200%;
+  animation: aboutGradientMove 4s ease-in-out infinite;
+  color: #222;
+  border: none;
+  border-radius: 30px;
+  padding: 14px 38px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  transition: background 0.2s, transform 0.2s;
+}
+.cta-btn:hover, .aboutus-cta-btn:hover, .like-btn:hover, .share-btn:hover, .subscribe-btn:hover {
+  background: linear-gradient(90deg, #ffe259 0%, #00c3ff 100%);
+  background-size: 200% 200%;
+  transform: translateY(-2px) scale(1.05);
+}
+
+.intro-section, .aboutus-intro, .timeline-section, .gallery-section, .team-section, .feedback-section, .interaction-section, .aboutus-values, .aboutus-reason, .aboutus-commit {
+  background: linear-gradient(120deg, #fff 0%, #f8f9fa 100%);
+  background-size: 200% 200%;
+  animation: aboutGradientMove 8s ease-in-out infinite;
+  box-shadow: 0 2px 16px rgba(0,195,255,0.08);
+}
+
+.team-card, .feedback-card {
+  background: linear-gradient(120deg, #fff 0%, #e9ecef 100%);
+  background-size: 200% 200%;
+  animation: aboutGradientMove 8s ease-in-out infinite;
+  color: #222;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(0,195,255,0.10);
+  padding: 28px 22px 18px 22px;
+  text-align: center;
+  width: 220px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.team-card:hover, .feedback-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 8px 32px #00c3ff44;
 }
 
 .aboutus-container {
@@ -24,19 +101,6 @@ body, .about-us-page {
   box-shadow: none;
 }
 
-.banner.aboutus-banner {
-  position: relative;
-  width: 100vw;
-  height: 45vw;
-  min-height: 320px;
-  max-height: 480px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  margin-bottom: 0;
-}
-
 .banner-img {
   width: 100vw;
   height: 100%;
@@ -47,29 +111,12 @@ body, .about-us-page {
   z-index: 1;
 }
 
-.banner-overlay {
-  position: absolute;
-  left: 0; top: 0;
-  width: 100vw;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(24,24,24,0.8) 60%, rgba(201,160,99,0.3) 100%);
-  z-index: 2;
-}
-
 .banner-content {
   position: relative;
   z-index: 3;
   text-align: left;
   color: var(--main-white);
   margin-left: 8vw;
-}
-
-.banner-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 3rem;
-  color: var(--main-gold);
-  margin-bottom: 0.5em;
-  letter-spacing: 2px;
 }
 
 .banner-slogan {
@@ -79,37 +126,6 @@ body, .about-us-page {
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-.cta-btn {
-  background: var(--main-gold);
-  color: var(--main-black);
-  border: none;
-  border-radius: 30px;
-  padding: 14px 38px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-  transition: background 0.2s, transform 0.2s;
-}
-.cta-btn:hover {
-  background: #b38a5a;
-  transform: translateY(-2px) scale(1.05);
-}
-
-.intro-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-  background: var(--main-white);
-  border-radius: 18px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  width: 90%;
-  max-width: 1100px;
-  margin: 40px auto 0 auto;
-  padding: 36px 24px;
-  flex-wrap: wrap;
-}
 .intro-img-wrapper {
   flex: 0 0 160px;
   display: flex;
@@ -402,9 +418,7 @@ body, .about-us-page {
 }
 
 .aboutus-root {
-  font-family: 'Montserrat', Arial, sans-serif;
-  background: #181818;
-  color: #fff;
+  background: #fff !important;
 }
 
 .aboutus-hero {
@@ -438,8 +452,14 @@ body, .about-us-page {
 .aboutus-hero-content {
   position: relative;
   z-index: 3;
-  text-align: left;
-  margin-left: 8vw;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .aboutus-hero-content h1 {
   font-family: 'Playfair Display', serif;
@@ -489,40 +509,51 @@ body, .about-us-page {
   padding: 36px 0;
 }
 .aboutus-values-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 28px;
-  justify-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
+
 .aboutus-value-card {
-  background: #181818;
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(201,160,99,0.10);
-  padding: 28px 18px 18px 18px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 16px rgba(0,195,255,0.10);
+  padding: 32px 20px 20px 20px;
   text-align: center;
-  min-width: 160px;
-  max-width: 220px;
-  border: 1.5px solid #c9a06333;
-  transition: transform 0.2s, box-shadow 0.2s;
+  min-width: 180px;
+  max-width: 260px;
+  border: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  margin: 0 10px;
 }
 .aboutus-value-card:hover {
-  transform: translateY(-6px) scale(1.04);
-  box-shadow: 0 8px 32px rgba(201,160,99,0.18);
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 8px 32px #00c3ff44;
 }
 .aboutus-value-icon {
-  font-size: 2.2rem;
-  color: #c9a063;
-  margin-bottom: 10px;
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  display: block;
 }
 .aboutus-value-title {
   font-weight: bold;
-  color: #c9a063;
-  font-size: 1.1rem;
-  margin-bottom: 6px;
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #ffe259 0%, #00c3ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  animation: gradientMove 4s ease-in-out infinite;
 }
 .aboutus-value-desc {
-  color: #f5e9d7;
+  color: #0070b8;
   font-size: 1rem;
+  font-weight: 500;
+  opacity: 1;
 }
 
 .aboutus-reason {
@@ -579,15 +610,16 @@ body, .about-us-page {
   padding: 0;
 }
 .aboutus-commit-box {
-  border: 2.5px solid #c9a063;
+  border: 2.5px solid #00c3ff;
   border-radius: 18px;
-  background: #181818;
+  background: #fff;
+  color: #222;
   padding: 32px 24px;
-  box-shadow: 0 2px 16px rgba(201,160,99,0.10);
+  box-shadow: 0 2px 16px rgba(0,195,255,0.10);
   text-align: center;
 }
 .aboutus-commit-box blockquote {
-  color: #c9a063;
+  color: var(--main-blue);
   font-size: 1.15rem;
   font-style: italic;
   margin: 0;

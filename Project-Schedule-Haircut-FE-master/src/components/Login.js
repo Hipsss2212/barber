@@ -7,9 +7,9 @@ import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { initializeAuth } from '../stores/slices/authSlice';
 import useCartService from '../services/cartService';
-import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { GoogleLogin } from '@react-oauth/google';
 
 const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) => {
     const [credentials, setCredentials] = useState({
@@ -54,6 +54,21 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
                     isAuthenticated: true,
                 }));
 
+                // Lưu customerId nếu là khách hàng
+                if (user.role === 'ROLE_USER') {
+                    // Ưu tiên user.customerId, nếu không có thì dùng user.id
+                    const customerId = user.customerId || user.id;
+                    if (customerId) {
+                        localStorage.setItem('customerId', customerId);
+                        console.log('Đã lưu customerId:', customerId);
+                    } else {
+                        console.warn('Không tìm thấy customerId trong dữ liệu trả về:', user);
+                    }
+                } else {
+                    // Nếu không phải customer thì xóa customerId khỏi localStorage
+                    localStorage.removeItem('customerId');
+                }
+
                 toast.success('Đăng nhập thành công!');
                 // Chỉ gọi fetchItemCount nếu không phải nhân viên
                 if (user.role !== 'ROLE_EMPLOYEE') {
@@ -69,9 +84,40 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
                 onClose();
             }
         } catch (error) {
-            toast.error(error.message || 'Đăng nhập thất bại.');
+            // Sửa triệt để: chỉ hiện toast và chuyển về Home nếu là lỗi đăng nhập nơi khác hoặc bị khóa, không setError
+            const msg = error.message || '';
+            if (msg.includes('Tài khoản đã đăng nhập ở thiết bị khác')) {
+                toast.error('Tài khoản đã đăng nhập ở thiết bị khác. Vui lòng đăng xuất trước khi đăng nhập lại.');
+                window.location.href = '/home';
+                return;
+            }
+            if (msg.includes('Tài khoản của bạn bị khóa')) {
+                toast.error('Tài khoản của bạn bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ.');
+                window.location.href = '/home';
+                return;
+            }
+            // Chỉ setError nếu KHÔNG phải lỗi đặc biệt
+            setError(msg);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleGoogleLogin = async (credentialResponse) => {
+        try {
+            const res = await axios.post(
+                'http://localhost:9090/api/v1/api/auth/google',
+                { idToken: credentialResponse.credential }
+            );
+            localStorage.setItem('token', res.data.token);
+            dispatch(initializeAuth({
+                username: res.data.username,
+                isAuthenticated: true,
+            }));
+            toast.success('Đăng nhập Google thành công!');
+            onClose && onClose();
+        } catch (err) {
+            toast.error('Đăng nhập Google thất bại!');
         }
     };
 
@@ -85,30 +131,15 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
         }
     };
 
-    const handleGoogleLogin = async (credentialResponse) => {
-        try {
-            const res = await axios.post(
-                'http://localhost:9090/api/auth/google',
-                { idToken: credentialResponse.credential }
-            );
-            localStorage.setItem('token', res.data.token);
-            dispatch(initializeAuth({
-                username: res.data.username,
-                isAuthenticated: true,
-            }));
-            toast.success('Đăng nhập Google thành công!');
-            onClose();
-        } catch (err) {
-            toast.error('Đăng nhập Google thất bại!');
-        }
-    };
-
     return (
         <div className="login-container">
             <button className="close-button" onClick={onClose}>×</button>
             <h2 className="login-title">ĐĂNG NHẬP</h2>
 
-            {error && <div className="error-message">{error}</div>}
+            {/* Chỉ render error nếu KHÔNG phải lỗi đăng nhập nơi khác hoặc bị khóa */}
+            {error && !error.includes('Tài khoản đã đăng nhập ở thiết bị khác') && !error.includes('Tài khoản của bạn bị khóa') && (
+                <div className="error-message">{error}</div>
+            )}
 
             <div className="login-fields">
                 <div className="input-group">
@@ -170,6 +201,13 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
                 </button>
             </div>
 
+            {/* Thêm nút Google Login vào giao diện */}
+            <GoogleLogin
+                onSuccess={handleGoogleLogin}
+                onError={() => toast.error('Đăng nhập Google thất bại!')}
+                // Không truyền các props undefined
+            />
+
             <div className="register-link">
                 Bạn chưa có tài khoản?{' '}
                 <a
@@ -183,12 +221,6 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
                     Đăng ký ngay
                 </a>
             </div>
-
-            {/* Tạm thời ẩn Google Login để tránh lỗi 403 */}
-            <GoogleLogin
-                onSuccess={handleGoogleLogin}
-                onError={() => toast.error('Đăng nhập Google thất bại!')}
-            />
         </div>
     );
 };

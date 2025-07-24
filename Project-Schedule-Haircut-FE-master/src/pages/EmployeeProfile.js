@@ -9,10 +9,13 @@ import { toast } from 'react-toastify';
 
 const EmployeeProfile = () => {
     const [formData, setFormData] = useState({
+        userName: '',
+        fullName: '',
         email: '',
         phone: '',
         address: '',
-        username: ''
+        avatar: '',
+        age: 22 // mặc định nếu chưa có
     });
     const {
         getProfile,
@@ -29,10 +32,13 @@ const EmployeeProfile = () => {
             try {
                 const data = await getProfile(username);
                 setFormData({
+                    userName: data.userName || '',
+                    fullName: data.fullName || '',
                     email: data.email || '',
                     phone: data.phone || '',
                     address: data.address || '',
-                    username: data.userName || ''
+                    avatar: data.avatar || '',
+                    age: data.age || 22 // mặc định nếu chưa có
                 });
                 setAvatarLink(data.avatar || '');
             } catch (error) {
@@ -72,7 +78,12 @@ const EmployeeProfile = () => {
         e.preventDefault();
         if (!validateForm()) return;
         try {
-            await updateProfileService(formData);
+            // Gửi đủ trường cho backend
+            await updateProfileService({
+                ...formData,
+                avatar: avatarLink || formData.avatar,
+                age: Number(formData.age) || 22
+            });
             const username = Cookies.get('username');
             await getProfile(username);
         } catch (error) {
@@ -125,7 +136,7 @@ const EmployeeProfile = () => {
                         <div className="profile-modern-avatar-block">
                             <div className="profile-modern-avatar-wrapper">
                                 <img
-                                    src={avatarLink || profile?.avatar}
+                                    src={avatarLink || formData.avatar}
                                     alt="Ảnh nhân viên"
                                     className="profile-modern-avatar-img"
                                 />
@@ -150,17 +161,27 @@ const EmployeeProfile = () => {
                                     </button>
                                 )}
                             </div>
-                            <div className="profile-modern-username">{profile?.userName}</div>
+                            <div className="profile-modern-username">{formData.userName}</div>
                         </div>
                         <form className="profile-modern-form" onSubmit={handleSubmit}>
                             <div className="profile-modern-form-group">
                                 <label>Tên đăng nhập</label>
                                 <input
                                     type="text"
-                                    name="username"
-                                    value={formData.username}
+                                    name="userName"
+                                    value={formData.userName}
                                     onChange={handleInputChange}
                                     placeholder="Nhập tên đăng nhập"
+                                />
+                            </div>
+                            <div className="profile-modern-form-group">
+                                <label>Họ tên</label>
+                                <input
+                                    type="text"
+                                    name="fullName"
+                                    value={formData.fullName}
+                                    onChange={handleInputChange}
+                                    placeholder="Nhập họ tên"
                                 />
                             </div>
                             <div className="profile-modern-form-group">
@@ -191,6 +212,18 @@ const EmployeeProfile = () => {
                                     value={formData.address}
                                     onChange={handleInputChange}
                                     placeholder="Nhập địa chỉ của bạn"
+                                />
+                            </div>
+                            <div className="profile-modern-form-group">
+                                <label>Tuổi</label>
+                                <input
+                                    type="number"
+                                    name="age"
+                                    value={formData.age}
+                                    onChange={handleInputChange}
+                                    placeholder="Nhập tuổi"
+                                    min={18}
+                                    max={80}
                                 />
                             </div>
                             <button

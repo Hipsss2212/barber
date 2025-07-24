@@ -76,7 +76,8 @@ const ServiceManagement = () => {
             }
             await fetchData();
         } catch (error) {
-            console.error('Lỗi khi xóa: ' + error.message);
+            // Hiển thị message lỗi rõ ràng cho user
+            message.error(error.message || 'Không thể xóa do đang được sử dụng trong combo hoặc dữ liệu liên quan!');
         }
     };
 

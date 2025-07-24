@@ -29,49 +29,45 @@ const Dashboard = () => {
     const [revenueData, setRevenueData] = useState([]);
     const [employeesList, setEmployeesList] = useState([]);
     const [servicesList, setServicesList] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchStatistics();
-    }, [dateRange]);
+    }, [dateRange, employee, service]);
 
     const fetchStatistics = async () => {
+        setLoading(true);
         let params = {};
         if (dateRange && dateRange.length === 2) {
             params.from = dateRange[0] && dateRange[0].format ? dateRange[0].format('YYYY-MM-DD') : dateRange[0];
             params.to = dateRange[1] && dateRange[1].format ? dateRange[1].format('YYYY-MM-DD') : dateRange[1];
         }
-        const res = await axiosClient.get('/admin/statistics', { params });
-        setTotalRevenue(res.totalRevenue);
-        setRevenueData(res.revenueByDay);
-        setFilteredData(res.detailList);
-        setEmployeesList(res.revenueByEmployee.map(e => e.employee));
-        // Nếu backend trả về danh sách dịch vụ, setServicesList(res.services)
+        if (employee) params.employee = employee;
+        if (service) params.service = service;
+        try {
+            const res = await axiosClient.get('/admin/statistics', { params });
+            setTotalRevenue(res.totalRevenue);
+            setRevenueData(res.revenueByDay);
+            setFilteredData(res.detailList);
+            setEmployeesList(res.revenueByEmployee.map(e => e.employee));
+            if (res.services) setServicesList(res.services);
+        } catch (err) {
+            setFilteredData([]);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleDateChange = (dates) => {
         setDateRange(dates);
-        // Lọc theo ngày
-        if (dates) {
-            const [startDate, endDate] = dates;
-            const filtered = mockData.filter(
-                (item) => item.date >= startDate && item.date <= endDate
-            );
-            setFilteredData(filtered);
-        }
     };
 
     const handleEmployeeChange = (value) => {
         setEmployee(value);
-        // Lọc theo nhân viên
-        const filtered = mockData.filter((item) => item.employee === value);
-        setFilteredData(filtered);
     };
 
     const handleServiceChange = (value) => {
         setService(value);
-        // Lọc theo dịch vụ
-        const filtered = mockData.filter((item) => item.service === value);
-        setFilteredData(filtered);
     };
 
     const generateReport = () => {
@@ -100,14 +96,15 @@ const Dashboard = () => {
     ];
 
     return (
-        <div className="management-container">
+        <div className="management-container dashboard-gradient-bg">
             <h2 className="management-header">Báo cáo thống kê</h2>
             <Row gutter={16}>
                 <Col span={6}>
                     <Select
                         placeholder="Chọn nhân viên"
-                        style={{ width: 200 }}
+                        style={{ width: 200, transition: 'box-shadow 0.4s' }}
                         onChange={handleEmployeeChange}
+                        className="dashboard-select"
                     >
                         {employeesList.map((employee, index) => (
                             <Select.Option key={index} value={employee}>
@@ -119,8 +116,9 @@ const Dashboard = () => {
                 <Col span={6}>
                     <Select
                         placeholder="Chọn dịch vụ"
-                        style={{ width: 200 }}
+                        style={{ width: 200, transition: 'box-shadow 0.4s' }}
                         onChange={handleServiceChange}
+                        className="dashboard-select"
                     >
                         {servicesList.map((service, index) => (
                             <Select.Option key={index} value={service}>
@@ -130,18 +128,25 @@ const Dashboard = () => {
                     </Select>
                 </Col>
                 <Col span={12}>
-                    <RangePicker onChange={handleDateChange} style={{ width: 300 }} />
+                    <RangePicker onChange={handleDateChange} style={{ width: 300, transition: 'box-shadow 0.4s' }} className="dashboard-datepicker" />
                 </Col>
             </Row>
 
             <div style={{ marginTop: 24 }}>
-                <h3>Tổng doanh thu</h3>
-                <Statistic title="Tổng doanh thu" value={totalRevenue} suffix="VND" />
+                <h3 style={{ fontWeight: 600, color: '#6366f1', transition: 'color 0.4s' }}>Tổng doanh thu</h3>
+                <Statistic title="Tổng doanh thu" value={totalRevenue} suffix="VND" className="dashboard-statistic" />
             </div>
 
-            <div className="ant-column" style={{ marginTop: 24 }}>
-                <h3>Thống kê doanh thu theo ngày</h3>
-                <Column data={revenueData} xField="date" yField="amount" height={300} />
+            <div className="ant-column dashboard-chart" style={{ marginTop: 24 }}>
+                <h3 style={{ fontWeight: 600, color: '#06b6d4', transition: 'color 0.4s' }}>Thống kê doanh thu theo ngày</h3>
+                <Column 
+                    data={revenueData} 
+                    xField="date" 
+                    yField="amount" 
+                    height={300} 
+                    color={["#6366f1", "#06b6d4"]}
+                    animation={{ appear: { animation: 'path-in', duration: 1200, easing: 'easeOutBounce' } }}
+                />
             </div>
 
             <Table
@@ -150,13 +155,15 @@ const Dashboard = () => {
                 rowKey={record => `${record.employee}-${record.service}-${record.date}-${record.amount}`}
                 bordered
                 pagination={{ pageSize: 5 }}
+                className="dashboard-table"
+                loading={loading}
             />
 
             <div style={{ marginTop: 24 }}>
-                <Button onClick={generateReport} style={{ marginRight: 16 }}>
+                <Button onClick={generateReport} style={{ marginRight: 16 }} className="dashboard-btn">
                     Xuất báo cáo Excel
                 </Button>
-                <Button onClick={generatePDF}>Xuất báo cáo PDF</Button>
+                <Button onClick={generatePDF} className="dashboard-btn">Xuất báo cáo PDF</Button>
             </div>
         </div>
     );

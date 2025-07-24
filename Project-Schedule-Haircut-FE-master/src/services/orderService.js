@@ -15,17 +15,14 @@ const useOrderService = () => {
 
             if (createOrder.fulfilled.match(resultAction)) {
                 toast.success(resultAction.payload);
-
                 navigate('/home');
             } else {
-                const errorMsg =
-                    resultAction.payload ||
-                    'Đặt lịch thất bại, vui lòng thử lại.';
+                // Lấy message nếu là object
+                const payload = resultAction.payload;
+                const errorMsg = typeof payload === 'string' ? payload : payload?.message || 'Đặt lịch thất bại, vui lòng thử lại.';
                 throw new Error(errorMsg);
             }
         } catch (error) {
-            console.log(error);
-
             toast.error(error.message);
             throw error;
         }
@@ -44,7 +41,9 @@ const useOrderService = () => {
                 toast.success("Huỷ lịch thành công");
                 return true;
             } else {
-                const errorMsg = resultAction.payload || 'Huỷ lịch thất bại';
+                // Lấy message nếu là object
+                const payload = resultAction.payload;
+                const errorMsg = typeof payload === 'string' ? payload : payload?.message || 'Huỷ lịch thất bại';
                 throw new Error(errorMsg);
             }
         } catch (error) {

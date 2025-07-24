@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = '';
+const API_URL = 'http://localhost:9090/api/v1';
 
 const axiosClient = axios.create({
     baseURL: API_URL,
@@ -53,6 +53,5 @@ axiosClient.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
 
 export default axiosClient;

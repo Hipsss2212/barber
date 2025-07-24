@@ -76,7 +76,7 @@ const AdminHome = () => {
 
     const handleLogout = async () => {
         await logout();
-        window.location.reload();
+        navigate('/home');
     };
 
     const userMenuItems = [
@@ -104,7 +104,7 @@ const AdminHome = () => {
             <Sider collapsible theme={theme}>
                 <div className="admin-logo">
                     <h2 style={{ color: theme === 'dark' ? '#fff' : '#000', textAlign: 'center' }}>
-                        Trang quản trị BossBarber
+                        Trang quản trị SayHair
                     </h2>
                 </div>
                 <Menu theme={theme} defaultSelectedKeys={['1']} mode="inline" items={menuItems} />

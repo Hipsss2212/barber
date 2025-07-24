@@ -69,7 +69,7 @@ const AboutUs = () => {
       <section className="aboutus-reason animate-in">
         <div className="aboutus-reason-grid">
           <div className="aboutus-reason-img-wrap">
-            <img src={value3} alt="Không gian Barber" className="aboutus-reason-img" />
+            <img src="https://cdn.tuoitre.vn/471584752817336320/2024/4/9/vch-mc-tran-thanh-17126726282441492066394.png" alt="Không gian Barber" className="aboutus-reason-img" />
           </div>
           <div className="aboutus-reason-content">
             <h2>Tại sao khách hàng luôn quay lại?</h2>

@@ -24,6 +24,8 @@ import { Navigate } from 'react-router-dom';
 import AboutUs from '../pages/AboutUs';
 import CouponManagement from '../components/CouponManagement';
 import EmployeeProfile from '../pages/EmployeeProfile';
+import ProductPage from '../pages/ProductPage';
+import LoginForm from '../components/Login';
 
 const routes = [
     {
@@ -158,7 +160,7 @@ const routes = [
         private: false,
         children: [
             { path: '', element: <Dashboard /> },
-            { path: 'acounts', element: <AccountManagement /> },
+            { path: 'accounts', element: <AccountManagement /> },
             { path: 'schedules', element: <ScheduleManagement /> },
             { path: 'services', element: <ServiceManagement /> },
             { path: 'transactions', element: <TransactionManagement /> },
@@ -175,6 +177,24 @@ const routes = [
         element: (
             <MainLayout>
                 <AboutUs />
+            </MainLayout>
+        ),
+        private: false,
+    },
+    {
+        path: '/products',
+        element: (
+            <MainLayout>
+                <ProductPage />
+            </MainLayout>
+        ),
+        private: false,
+    },
+    {
+        path: '/login',
+        element: (
+            <MainLayout>
+                <LoginForm />
             </MainLayout>
         ),
         private: false,

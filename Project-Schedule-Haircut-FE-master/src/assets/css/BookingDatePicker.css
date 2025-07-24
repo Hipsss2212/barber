@@ -1,18 +1,34 @@
 /* Main Container - Matching StylistPicker */
 .date-picker-container {
-    max-width: 500px;
+    max-width: 520px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 28px 18px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
+    background-size: 200% 200%;
+    animation: bookingDateGradientMove 8s ease-in-out infinite;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px 0 rgba(10,42,124,0.08);
     font-family: 'Segoe UI', sans-serif;
+    transition: box-shadow 0.4s, background 0.5s;
+}
+
+@keyframes bookingDateGradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* Title - Same style as StylistPicker */
 .date-picker-title {
-    color: #333;
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 20px;
+    color: #0A2A7C;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 22px;
     text-align: center;
+    background: linear-gradient(90deg, #0A2A7C 0%, #00b8fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* Date Picker - Matching Stylist Selector */
@@ -23,34 +39,39 @@
 
 /* Toggle - Same as Stylist selector */
 .date-toggle {
-    padding: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #f8f8f8;
+    padding: 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #f0fdfa 0%, #e0e7ff 100%);
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: border 0.3s, background 0.5s;
+    font-size: 17px;
+    font-weight: 500;
 }
 
 .date-toggle:hover {
-    border-color: #0a2a7c;
+    border-color: #00b8fc;
+    background: linear-gradient(90deg, #e0e7ff 0%, #f0fdfa 100%);
 }
 
 .date-placeholder {
-    color: #555;
+    color: #0A2A7C;
     font-size: 16px;
+    font-weight: 500;
 }
 
 .dropdown-arrow {
-    transition: transform 0.3s ease;
-    color: #666;
-    font-size: 12px;
+    transition: transform 0.3s, color 0.3s;
+    color: #00b8fc;
+    font-size: 16px;
 }
 
 .dropdown-arrow.open {
     transform: rotate(180deg);
+    color: #0A2A7C;
 }
 
 /* Date List - Matching Stylist List */
@@ -59,32 +80,57 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #f0fdfa 0%, #e0e7ff 100%);
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(0, 184, 252, 0.10);
     z-index: 100;
-    max-height: 300px;
+    max-height: 320px;
     overflow-y: auto;
-    margin-top: 5px;
+    margin-top: 7px;
+    animation: fadeInUp 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Date Item - Matching Stylist Option */
 .date-option {
-    padding: 12px 15px;
+    padding: 14px 18px;
     display: flex;
     align-items: center;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background 0.2s, box-shadow 0.3s;
     justify-content: space-between;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .date-option:hover {
-    background-color: #f5f5f5;
+    background: linear-gradient(90deg, #e0e7ff 0%, #f0fdfa 100%);
+    box-shadow: 0 2px 8px 0 rgba(0,184,252,0.08);
 }
 
 .date-option.selected {
-    background-color: #f0f7ff;
+    background: linear-gradient(90deg, #0A2A7C 0%, #00b8fc 100%);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 4px 16px 0 rgba(0,184,252,0.18);
+}
+.date-option.selected .day-name,
+.date-option.selected .date-number {
+    color: #fff;
+}
+.date-option.selected .date-status.status-weekday {
+    background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+    color: #fff;
+}
+.date-option.selected .date-status.status-weekend {
+    background: linear-gradient(90deg, #f472b6 0%, #e11d48 100%);
+    color: #fff;
 }
 
 
@@ -103,31 +149,33 @@
 }
 
 .day-name {
-    font-weight: 600;
-    color: #333;
+    font-weight: 700;
+    color: #0A2A7C;
     margin-bottom: 3px;
 }
 
 .date-number {
-    font-size: 14px;
-    color: #666;
+    font-size: 15px;
+    color: #555;
 }
 
 /* Status Badge - Similar to specialty in Stylist */
 .date-status {
-    padding: 6px 12px;
+    padding: 7px 16px;
     border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 1px 4px 0 rgba(0,184,252,0.08);
+    transition: background 0.3s, color 0.3s;
 }
 
 .status-weekday {
-    background-color: #e3f2fd;
+    background: linear-gradient(90deg, #e3f2fd 0%, #b2eaff 100%);
     color: #1976d2;
 }
 
 .status-weekend {
-    background-color: #fce4ec;
+    background: linear-gradient(90deg, #fce4ec 0%, #ffe3f2 100%);
     color: #c2185b;
 }
 
@@ -136,66 +184,76 @@
     display: flex;
     align-items: center;
     padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
+    background: linear-gradient(90deg, #f0fdfa 0%, #e0e7ff 100%);
+    border-radius: 10px;
     margin-bottom: 20px;
+    box-shadow: 0 2px 8px 0 rgba(0,184,252,0.08);
 }
 
 .selected-date-icon {
     margin-right: 15px;
-    font-size: 20px;
-    color: #0a2a7c;
+    font-size: 22px;
+    color: #00b8fc;
 }
 
 .selected-date-text {
-    font-weight: 600;
-    color: #0a2a7c;
+    font-weight: 700;
+    color: #0A2A7C;
+    font-size: 16px;
 }
 
 /* Navigation Buttons - Same as StylistPicker */
 .navigation-buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 30px;
+    margin-top: 32px;
 }
 
 .nav-button {
-    padding: 12px 25px;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: 500;
+    padding: 13px 28px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
     border: none;
+    box-shadow: 0 2px 8px 0 rgba(0,184,252,0.08);
 }
 
 .back-button-date-picker {
-    background-color: #f0f0f0;
-    color: #555;
+    background: linear-gradient(90deg, #f0fdfa 0%, #e0e7ff 100%);
+    color: #0A2A7C;
+    font-weight: 600;
 }
 
 .back-button-date-picker:hover {
-    background-color: #e0e0e0;
+    background: linear-gradient(90deg, #e0e7ff 0%, #f0fdfa 100%);
+    color: #00b8fc;
 }
 
 .next-button {
-    background-color: #0a2a7c;
-    color: white;
+    background: linear-gradient(90deg, #0A2A7C 0%, #00b8fc 100%);
+    color: #fff;
+    font-weight: 700;
 }
 
 .next-button:hover:not(:disabled) {
-    background-color: #1a3a9c;
+    background: linear-gradient(90deg, #00b8fc 0%, #0A2A7C 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px 0 rgba(0,184,252,0.18);
 }
 
 .next-button:disabled {
-    background-color: #cccccc;
+    background: #cccccc;
     cursor: not-allowed;
+    color: #fff;
+    opacity: 0.7;
 }
 
 /* Responsive Design - Same as StylistPicker */
 @media (max-width: 480px) {
     .date-picker-container {
-        padding: 15px;
+        padding: 10px;
     }
 
     .navigation-buttons {

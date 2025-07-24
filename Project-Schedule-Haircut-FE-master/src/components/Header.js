@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { showAuthModal } from '../stores/slices/actionFormSlice';
 import '../assets/css/Header.css';
 import { useAuth } from '../stores/context/AuthContext';
@@ -49,7 +49,6 @@ const Header = () => {
     const handleLogout = async () => {
         try {
             await logout();
-            // Chỉ gọi fetchItemCount nếu không phải nhân viên
             if (userRole !== 'ROLE_EMPLOYEE') {
                 await fetchItemCount();
             }
@@ -73,9 +72,8 @@ const Header = () => {
                 <div className="logo">
                     <img
                         src={logoImage}
-                        alt="30Shine Logo"
+                        alt="Boss Barber Logo"
                         onClick={() => navigate('/home')}
-                        style={{ cursor: 'pointer' }}
                         className="header-logo-img"
                     />
                 </div>
@@ -94,17 +92,21 @@ const Header = () => {
                             <Link to="/home" className="nav-link">Trang Chủ</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/about" className="nav-link">Về Boss Barber</Link>
+                            <Link to="/about" className="nav-link">Về SayHair Salon</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/home" className="nav-link">Boss Barber Shop</Link>
+                            <Link to="/products" className="nav-link">Dịch Vụ</Link>
                         </li>
                     </ul>
                 </nav>
 
                 <div className="user-actions">
                     {isAuthenticated ? (
-                        <div className="user-info" onClick={toggleDropdown} ref={userInfoRef}>
+                        <div 
+                            className="user-info" 
+                            onClick={toggleDropdown} 
+                            ref={userInfoRef}
+                        >
                             <div className="user-dropdown-trigger">
                                 <span>Xin chào, {username}</span>
                                 <span className={`dropdown-arrow-header ${showDropdown ? 'open' : ''}`}>▼</span>
@@ -120,9 +122,11 @@ const Header = () => {
                     )}
                 </div>
 
-                {/* Dropdown menu */}
                 {isAuthenticated && (
-                    <div className={`dropdown-wrapper ${showDropdown ? 'open' : ''}`} ref={dropdownRef}>
+                    <div 
+                        className={`dropdown-wrapper ${showDropdown ? 'open' : ''}`} 
+                        ref={dropdownRef}
+                    >
                         <div className="dropdown-menu-header">
                             <Link
                                 to="/profile"

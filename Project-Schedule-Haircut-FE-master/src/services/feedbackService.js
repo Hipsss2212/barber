@@ -1,8 +1,7 @@
-import axios from 'axios';
-const API_URL = 'http://localhost:8080/api/comments';
+import axiosClient from '../config/axios';
 
 export const getCommentsByEmployee = (employeeId) =>
-  axios.get(`${API_URL}/employee/${employeeId}`);
+  axiosClient.get(`/api/comments/employee/${employeeId}`);
 
 export const addComment = (data) =>
-  axios.post(`${API_URL}/`, data); 
+  axiosClient.post('/api/comments', data); 

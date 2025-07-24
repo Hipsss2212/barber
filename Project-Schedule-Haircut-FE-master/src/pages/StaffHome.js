@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { FiCalendar, FiCheckCircle, FiXCircle, FiUser, FiLogOut } from 'react-icons/fi';
+import { FaCalendarAlt, FaCheckCircle, FaUserCheck, FaTimesCircle, FaClipboardList } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 import '../assets/css/StaffHome.css';
 import useStaffService from '../services/staffService';
@@ -154,15 +155,17 @@ const StaffHome = () => {
     }
 
     return (
-        <div className="staff-home-container">
-            <div className="staff-header">
-                <h1 className="page-title">Trang Chủ Nhân Viên</h1>
-                <div className="employee-info">
+        <div className="staff-home-dynamic">
+            <header className="staff-header-dynamic">
+                <div className="header-left">
+                    <FaClipboardList className="header-main-icon" />
+                    <h1 className="page-title-dynamic">Trang Chủ Nhân Viên</h1>
+                </div>
+                <div className="employee-info-dynamic">
                     <div className="username-container" onClick={toggleDropdown}>
                         <span className="username">Nhân viên, {employeeInfo.username}</span>
                         <span className={`dropdown-arrow ${showDropdown ? 'active' : ''}`}>▼</span>
                     </div>
-
                     {showDropdown && (
                         <div className={`dropdown-menu ${showDropdown ? 'active' : ''}`}>
                             <div className="dropdown-item" onClick={() => { navigate('/employee/profile'); setShowDropdown(false); }}>
@@ -177,36 +180,42 @@ const StaffHome = () => {
                         </div>
                     )}
                 </div>
-            </div>
-
-            {/* Lịch làm việc của tôi */}
-            {/* <MyWorkSchedule /> */}
-
-            <div className="stats-section">
-                <h2 className="stats-title">Tháng này</h2>
-                <div className="stats-container">
-                    <div className="stat-card blue">
-                        <h3>Tổng lịch hẹn</h3>
-                        <p>{bookingStats?.totalBooked || 0}</p>
+            </header>
+            <section className="stats-section-dynamic">
+                <div className="stats-container-dynamic">
+                    <div className="stat-card-dynamic blue">
+                        <div className="stat-icon"><FaClipboardList /></div>
+                        <div className="stat-info">
+                            <span className="stat-title">Tổng lịch hẹn</span>
+                            <span className="stat-value">{bookingStats?.totalBooked || 0}</span>
+                        </div>
                     </div>
-                    <div className="stat-card green">
-                        <h3>Đã hoàn thành</h3>
-                        <p>{bookingStats?.doneBooked || 0}</p>
+                    <div className="stat-card-dynamic green">
+                        <div className="stat-icon"><FaCheckCircle /></div>
+                        <div className="stat-info">
+                            <span className="stat-title">Đã hoàn thành</span>
+                            <span className="stat-value">{bookingStats?.doneBooked || 0}</span>
+                        </div>
                     </div>
-                    <div className="stat-card yellow">
-                        <h3>Chờ xác nhận</h3>
-                        <p>{bookingStats?.upcomingBooked || 0}</p>
+                    <div className="stat-card-dynamic yellow">
+                        <div className="stat-icon"><FaUserCheck /></div>
+                        <div className="stat-info">
+                            <span className="stat-title">Chờ xác nhận</span>
+                            <span className="stat-value">{bookingStats?.upcomingBooked || 0}</span>
+                        </div>
                     </div>
-                    <div className="stat-card red">
-                        <h3>Hủy/Đổi lịch</h3>
-                        <p>{bookingStats?.cancelledBooked || 0}</p>
+                    <div className="stat-card-dynamic red">
+                        <div className="stat-icon"><FaTimesCircle /></div>
+                        <div className="stat-info">
+                            <span className="stat-title">Hủy/Đổi lịch</span>
+                            <span className="stat-value">{bookingStats?.cancelledBooked || 0}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div className="chart-section">
-                <div className="chart-header">
-                    <h2><FiCalendar className="icon" /> Lịch hẹn theo giờ</h2>
+            </section>
+            <section className="chart-section-dynamic">
+                <div className="chart-header-dynamic">
+                    <h2><FaCalendarAlt className="icon" /> Lịch hẹn theo giờ</h2>
                     <span className="chart-subtitle">Hôm nay</span>
                 </div>
                 <div className="chart-container">
@@ -242,9 +251,8 @@ const StaffHome = () => {
                         </ResponsiveContainer>
                     )}
                 </div>
-            </div>
-
-            <div className="upcoming-appointments">
+            </section>
+            <section className="upcoming-appointments-dynamic">
                 <h2>Lịch hẹn sắp tới <span className="badge">{pendingConfirmations?.length || 0}</span></h2>
                 <div className="appointments-table">
                     <table className="staff-table">
@@ -266,17 +274,10 @@ const StaffHome = () => {
                                             {appointment.status === 1 ? 'Đã xác nhận' : 'Chờ xác nhận'}
                                         </div>
                                     </td>
-
                                     <td className="staff-table-cell">{appointment.time}</td>
-
                                     <td className="staff-table-cell">{appointment.date}</td>
-
                                     <td className="staff-table-cell">{appointment.customerName}</td>
-
-                                    <td className="staff-table-cell">
-                                        {appointment.services.join(', ')}
-                                    </td>
-
+                                    <td className="staff-table-cell">{appointment.services.join(', ')}</td>
                                     <td className="staff-table-cell">
                                         <div className="action-buttons">
                                             <button
@@ -295,7 +296,6 @@ const StaffHome = () => {
                                                 <FiXCircle />
                                                 {!isCancelable(appointment) ? 'Không thể hủy' : 'Hủy'}
                                             </button>
-                                            {/* Nút hoàn thành */}
                                             {appointment.status === 1 && (
                                                 <button
                                                     className="complete-btn"
@@ -311,7 +311,7 @@ const StaffHome = () => {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </section>
         </div>
     );
 };

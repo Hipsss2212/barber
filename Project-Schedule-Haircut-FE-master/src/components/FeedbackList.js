@@ -3,10 +3,19 @@ import { getCommentsByEmployee } from '../services/feedbackService';
 
 const FeedbackList = ({ employeeId }) => {
   const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getCommentsByEmployee(employeeId).then(res => setComments(res.data));
+    if (!employeeId) return;
+    setLoading(true);
+    getCommentsByEmployee(employeeId)
+      .then(res => setComments(res))
+      .catch(() => setComments([]))
+      .finally(() => setLoading(false));
   }, [employeeId]);
+
+  if (loading) return <div>Đang tải feedback...</div>;
+  if (!comments.length) return <div>Chưa có feedback nào.</div>;
 
   return (
     <div>

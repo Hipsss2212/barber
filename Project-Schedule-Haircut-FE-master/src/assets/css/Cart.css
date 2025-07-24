@@ -1,16 +1,29 @@
+/* Gradient background for main section */
 .container__main {
     margin-top: 66px;
     margin-bottom: 65px;
     padding: 43px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
+    background-size: 200% 200%;
+    animation: cartGradientMove 8s ease-in-out infinite;
+    border-radius: 18px;
+    box-shadow: 0 4px 32px 0 rgba(10,42,124,0.08);
+}
+
+@keyframes cartGradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 26px;
-    background: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.10);
+    border-radius: 18px;
+    transition: box-shadow 0.4s, background 0.5s;
 }
 
 .bulk-actions {
@@ -20,22 +33,28 @@
 }
 
 .btn-delete-selected {
-    background: #dc3545;
+    background: linear-gradient(90deg, #e11d48 0%, #f43f5e 100%);
     color: white;
-    padding: 8px 16px;
+    padding: 10px 22px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background 0.3s;
+    font-weight: 600;
+    font-size: 16px;
+    box-shadow: 0 2px 8px 0 rgba(225,29,72,0.10);
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
 }
 
 .btn-delete-selected:disabled {
     background: #6c757d;
     cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .btn-delete-selected:hover:not(:disabled) {
-    background: #bb2d3b;
+    background: linear-gradient(90deg, #f43f5e 0%, #e11d48 100%);
+    box-shadow: 0 4px 16px 0 rgba(225,29,72,0.18);
+    transform: scale(1.04);
 }
 
 .container__chart {
@@ -43,68 +62,76 @@
     border-collapse: separate;
     border-spacing: 0;
     background: #fff;
-    border-radius: 8px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 12px 0 rgba(0,184,252,0.08);
+    margin-bottom: 18px;
+    animation: fadeInUp 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .container__header {
-    background: #15397F;
+    background: linear-gradient(90deg, #0A2A7C 0%, #00b8fc 100%);
     color: white;
-}
-
-.container__header:hover {
-    background: #15397F;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: background 0.6s;
 }
 
 .container__header th {
-    padding: 15px;
-    font-weight: 500;
+    padding: 18px;
+    font-weight: 600;
     text-align: center;
 }
 
-.container__header th:first-child {
-    border-top-left-radius: 8px;
-}
-
-.container__header th:last-child {
-    border-top-right-radius: 8px;
-}
-
-th,
-td {
-    padding: 15px;
+th, td {
+    padding: 18px;
     text-align: center;
     vertical-align: middle;
     border-bottom: 1px solid #eaeaea;
+    font-size: 16px;
 }
 
 tr:last-child td {
     border-bottom: none;
 }
 
+tr {
+    transition: background 0.3s;
+}
+
 tr:hover {
-    background-color: #f8fafc;
+    background: linear-gradient(90deg, #f0fdfa 0%, #e0e7ff 100%);
 }
 
 .header__service-img {
-    width: 80px;
-    height: 80px;
-    border-radius: 4px;
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
     object-fit: cover;
-    border: 1px solid #e0e0e0;
-    transition: transform 0.3s ease;
+    border: 2px solid #00b8fc22;
+    background: #f0fdfa;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 8px 0 rgba(0,184,252,0.08);
 }
 
 .header__service-img:hover {
-    transform: scale(1.05);
+    transform: scale(1.07);
+    box-shadow: 0 6px 24px 0 rgba(0,184,252,0.18);
 }
 
 .header__service1 {
     text-align: left;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.5;
-    padding-left: 15px;
+    padding-left: 18px;
+    color: #0A2A7C;
+    font-weight: 500;
 }
 
 .header__service1 br.br1 {
@@ -122,131 +149,125 @@ tr:hover {
 
 .header__voucher label {
     font-weight: 600;
-    color: #15397F;
+    color: #0A2A7C;
     width: 100px;
 }
 
 .header__voucher input {
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 12px 18px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
     width: 250px;
-    font-size: 14px;
-    transition: border 0.3s;
+    font-size: 16px;
+    transition: border 0.3s, box-shadow 0.3s;
 }
 
 .header__voucher input:focus {
     outline: none;
-    border-color: #15397F;
-    box-shadow: 0 0 0 2px rgba(21, 57, 127, 0.1);
+    border-color: #00b8fc;
+    box-shadow: 0 0 0 2px rgba(0,184,252,0.10);
 }
 
 .header__total {
-    margin-top: 25px;
+    margin-top: 28px;
     text-align: right;
-    font-size: 18px;
-    font-weight: 600;
-    color: #15397F;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0A2A7C;
     padding-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 18px;
 }
 
 .header__total span {
-    font-size: 20px;
-    color: #e74c3c;
+    font-size: 24px;
+    color: #e11d48;
+    font-weight: 800;
+    margin-left: 8px;
 }
 
 .btn {
     min-width: 180px;
-    height: 45px;
-    font-size: 16px;
-    font-weight: 600;
+    height: 48px;
+    font-size: 18px;
+    font-weight: 700;
     border: none;
-    border-radius: 4px;
-    padding: 0 20px;
+    border-radius: 10px;
+    padding: 0 32px;
     cursor: pointer;
     color: #fff;
-    background: linear-gradient(to right, #15397F, #1e56c5);
+    background: linear-gradient(90deg, #0A2A7C 0%, #00b8fc 100%);
     margin-left: 30px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background 0.4s, transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 2px 12px 0 rgba(0,184,252,0.12);
 }
 
 .btn:hover {
-    background: linear-gradient(to right, #1e56c5, #15397F);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(90deg, #00b8fc 0%, #0A2A7C 100%);
+    transform: scale(1.04);
+    box-shadow: 0 6px 24px 0 rgba(0,184,252,0.18);
 }
 
 .btn:active {
     transform: translateY(0);
 }
 
-.btn-remove {
-    transition: all 0.3s ease;
-}
-
-.btn-remove:hover {
-    color: #c0392b !important;
-    transform: scale(1.1);
-}
-
-/* Checkbox đẹp hơn */
 input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: #15397F;
+    width: 20px;
+    height: 20px;
+    accent-color: #0A2A7C;
     cursor: pointer;
+    border-radius: 6px;
+    transition: box-shadow 0.3s;
 }
 
-/* Link xóa dịch vụ */
-/* td a {
-    color: #e74c3c;
-    font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: all 0.2s;
-} */
+input[type="checkbox"]:focus {
+    box-shadow: 0 0 0 2px #00b8fc44;
+}
 
-/* 
-td a:hover {
-    background-color: #fde8e8;
-    text-decoration: underline;
-} */
+.empty-cart {
+    text-align: center;
+    padding: 30px 0;
+    font-size: 18px;
+    color: #888;
+    font-style: italic;
+}
 
-/* Responsive */
-@media (max-width: 768px) {
+.error {
+    padding: 50px;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+@media (max-width: 900px) {
     .container {
-        padding: 15px;
+        padding: 12px;
     }
-
-    .container__chart {
-        display: block;
-        overflow-x: auto;
+    .container__main {
+        padding: 12px;
     }
-
+    .header__service-img {
+        width: 70px;
+        height: 70px;
+    }
     .header__service1 {
-        font-size: 14px;
+        font-size: 15px;
+        padding-left: 8px;
     }
-
-    .header__voucher {
-        flex-direction: column;
-        align-items: flex-end;
-    }
-
     .header__voucher input {
-        width: 200px;
+        width: 160px;
     }
-
     .header__total {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 15px;
+        font-size: 17px;
     }
-
     .btn {
-        margin-left: 0;
-        margin-top: 10px;
+        min-width: 120px;
+        font-size: 15px;
+        padding: 0 16px;
     }
 }
 
@@ -277,22 +298,6 @@ td a:hover {
     margin-top: 20px;
     font-size: 18px;
     color: #333;
-}
-
-.empty-cart {
-    text-align: center;
-    padding: 30px 0;
-    font-size: 18px;
-    color: #888;
-    font-style: italic;
-}
-
-.error {
-    padding: 50px;
-    text-align: center;
-    color: red;
-    font-weight: bold;
-    font-size: 18px;
 }
 
 .error-message {

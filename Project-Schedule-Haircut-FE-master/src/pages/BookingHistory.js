@@ -107,7 +107,7 @@ const BookingHistory = () => {
             <Header />
             <main style={{ marginTop: 37, marginBottom: 65 }}>
                 <div className="booking-page">
-                    <div className="booking-history">
+                    <div className="booking-history booking-history-gradient">
                         <h2>Lịch sử đặt lịch</h2>
 
                         <div className="status-tabs">
@@ -128,9 +128,9 @@ const BookingHistory = () => {
                             </div>
                         ) : bookings.length > 0 ? (
                             bookings.map((booking, index) => (
-                                <div className="booking-item" key={index}>
+                                <div className="booking-item booking-item-animated" key={index}>
                                     <img
-                                        src={booking.serviceName[0].includes('Cắt tóc') ? haircutImg : haircutImg}
+                                        src="https://tse1.mm.bing.net/th/id/OIP.GDplenID7jPxKG-4WLbFDAHaFV?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
                                         alt={booking.serviceName[0]}
                                     />
                                     <div className="details">
@@ -211,11 +211,15 @@ const BookingHistory = () => {
                                                     title="Đánh giá nhân viên"
                                                     destroyOnClose
                                                 >
-                                                    <FeedbackForm
-                                                        employeeId={booking.employeeId}
-                                                        customerId={customerId}
-                                                        onSuccess={() => setOpenFeedback(false)}
-                                                    />
+                                                    {booking.employeeId ? (
+                                                        <FeedbackForm
+                                                            employeeId={booking.employeeId}
+                                                            customerId={customerId}
+                                                            onSuccess={() => setOpenFeedback(false)}
+                                                        />
+                                                    ) : (
+                                                        <div style={{ color: 'red' }}>Không xác định được nhân viên để đánh giá!</div>
+                                                    )}
                                                 </Modal>
                                             </>
                                         )}

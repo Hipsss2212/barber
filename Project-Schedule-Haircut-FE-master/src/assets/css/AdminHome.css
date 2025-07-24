@@ -1,12 +1,99 @@
-/* Logo */
+/* Sidebar Gradient & Animation */
+.ant-layout-sider {
+    background: linear-gradient(135deg, #0A2A7C 0%, #00b8fc 100%);
+    background-size: 200% 200%;
+    animation: sidebarGradientMove 8s ease-in-out infinite;
+    box-shadow: 2px 0 16px 0 rgba(10,42,124,0.08);
+    transition: background 0.6s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s;
+}
+
+@keyframes sidebarGradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .admin-logo {
     height: 67px;
     margin: 16px;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.10);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.3s ease, color 0.3s ease;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,184,252,0.10);
+    transition: background 0.4s, box-shadow 0.4s;
+    animation: fadeInLogo 1s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes fadeInLogo {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ant-menu {
+    background: transparent !important;
+    border: none;
+    margin-top: 12px;
+    font-size: 1.08rem;
+    font-weight: 500;
+    transition: background 0.4s;
+}
+
+.ant-menu-item {
+    border-radius: 8px !important;
+    margin: 0 8px 6px 8px !important;
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+    color: #fff !important;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.ant-menu-item a {
+    color: #fff !important;
+    transition: color 0.3s;
+}
+
+.ant-menu-item-selected, .ant-menu-item-active {
+    background: linear-gradient(90deg, #00b8fc 0%, #0A2A7C 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(0,184,252,0.10);
+}
+
+.ant-menu-item-selected a, .ant-menu-item-active a {
+    color: #fff !important;
+}
+
+.ant-menu-item:hover {
+    background: rgba(0,184,252,0.18) !important;
+    color: #fff !important;
+    transform: translateX(4px) scale(1.03);
+    box-shadow: 0 4px 16px rgba(0,184,252,0.12);
+}
+
+.ant-menu-item .anticon {
+    font-size: 1.15em;
+    margin-right: 10px;
+    vertical-align: middle;
+    color: #fff !important;
+    transition: color 0.3s;
+}
+
+/* Responsive Sidebar */
+@media (max-width: 768px) {
+    .ant-layout-sider {
+        min-width: 60px !important;
+        max-width: 60px !important;
+    }
+    .admin-logo {
+        font-size: 1.1rem;
+        padding: 0 4px;
+    }
+    .ant-menu {
+        font-size: 0.98rem;
+    }
 }
 
 /* Header */

@@ -223,11 +223,13 @@ const useManagementService = () => {
                 message.success('Xóa dịch vụ thành công');
                 return resultAction.payload;
             } else {
-                const errorMsg = resultAction.payload?.message || 'Xóa dịch vụ thất bại';
+                // Hiển thị đúng message lỗi từ backend
+                const errorMsg = typeof resultAction.payload === 'string' ? resultAction.payload : (resultAction.payload?.message || 'Xóa dịch vụ thất bại');
+                message.error(errorMsg);
                 throw new Error(errorMsg);
             }
         } catch (error) {
-            message.error(error.message);
+            // message.error(error.message); // Đã hiển thị ở trên
             throw error;
         }
     };

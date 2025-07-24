@@ -155,9 +155,11 @@ export const deleteService = createAsyncThunk(
     async (id, { rejectWithValue }) => {
         try {
             const response = await axiosClient.delete(`/admin/services/${id}`);
-            return response;
+            return { id };
         } catch (error) {
-            return rejectWithValue(error);
+            // Lấy message từ backend nếu có, nếu không thì lấy error.message
+            const message = error.response?.data?.message || error.message || 'Lỗi không xác định';
+            return rejectWithValue(message);
         }
     }
 );
@@ -371,7 +373,7 @@ const managementSlice = createSlice({
                     ].some((type) => action.type.startsWith(type)),
                 (state, action) => {
                     state.loading = false;
-                    state.error = action.payload;
+                    state.error = typeof action.payload === 'string' ? action.payload : (action.payload?.message || 'Có lỗi xảy ra');
                 }
             );
     }

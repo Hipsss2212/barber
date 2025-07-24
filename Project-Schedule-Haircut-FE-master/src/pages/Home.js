@@ -20,13 +20,28 @@ import shine2 from "../assets/image/shine2.jpg";
 import shine3 from "../assets/image/shine3.jpg";
 import memberBanner from "../assets/image/image.png";
 
+const heroImages = [
+  "https://baogiaothong.mediacdn.vn/603483875699699712/2024/7/3/anh-trai-say-hi-17200028132131457244451.jpeg",
+  "https://kenh14cdn.com/203336854389633024/2024/6/25/edit-img9335-1719321309667109840988.jpeg",
+  "https://thegioidienanh.vn/stores/news_dataimages/2024/092024/15/12/atsh-eps14-tiet-muc-team-hieuthuhai-1120240915124020.jpg?rt=20240915124827"
+];
+
 const Home = () => {
     const addToRefs = useScrollAnimation();
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const [heroIndex, setHeroIndex] = useState(0);
     const dispatch = useDispatch();
     const { categories, loading, error } = useSelector(state => state.categories);
     const { employees } = useSelector(state => state.employees);
+
+    // Auto slide hero images
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setHeroIndex(idx => (idx + 1) % heroImages.length);
+      }, 4000);
+      return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         dispatch(fetchAllCategories());
@@ -42,7 +57,7 @@ const Home = () => {
         {
             id: 1,
             name: "Cắt tóc",
-            image: haircutService,
+            image: "https://static2.vieon.vn/vieplay-image/poster_v4/2024/05/31/jz7auhmf_660x946-atsh-thumb-ducphuc.png",
             description: "Cắt tóc nam hiện đại với kỹ thuật chuyên nghiệp",
             icon: "✂️",
             categoryId: haircutCategories.find(cat => cat.name.toLowerCase().includes('cắt'))?.id
@@ -50,7 +65,7 @@ const Home = () => {
         {
             id: 2,
             name: "Uốn tóc",
-            image: permService,
+            image: "https://static2.vieon.vn/vieplay-image/poster_v4/2024/06/06/vr9uom33_660x946-atsh-thumb-captain6c186cdc806f75c8426fd40ef8e148d6.png",
             description: "Uốn định hình chuyên nam đầu tiên tại Việt Nam",
             icon: "🌀",
             categoryId: haircutCategories.find(cat => cat.name.toLowerCase().includes('uốn'))?.id
@@ -58,7 +73,7 @@ const Home = () => {
         {
             id: 3,
             name: "Nhuộm tóc",
-            image: dyeService,
+            image:"https://static2.vieon.vn/vieplay-image/poster_v4/2024/06/06/9fvomnzv_660x946-atsh-thumb-phapkieua4125f59e5c5addba7bc96e7eb2ae6f3.png",
             description: "Nhuộm tóc nam với màu sắc thời trang",
             icon: "🎨",
             categoryId: haircutCategories.find(cat => cat.name.toLowerCase().includes('nhuộm'))?.id
@@ -113,7 +128,6 @@ const Home = () => {
         setToastMessage(`Đã chọn collection: ${collectionName}`);
         setShowToast(true);
         setTimeout(() => setShowToast(false), 3000);
-        // window.location.href = `/shine-collection/${collectionName.toLowerCase().replace(/\s+/g, '-')}`;
     };
 
     return (
@@ -122,13 +136,29 @@ const Home = () => {
 
             {/* 1. Hero Section */}
             <section className="home-hero" ref={addToRefs}>
-                <img src={heroBanner} alt="Boss Barber Hero" className="home-hero-bg" />
+                <img
+                  src={heroImages[heroIndex]}
+                  alt="Boss Barber Hero"
+                  className="home-hero-bg"
+                  style={{ transition: 'opacity 0.8s', opacity: 1 }}
+                />
+                <div className="home-hero-image-overlay" />
+                <div style={{ position: 'absolute', bottom: 24, left: 0, right: 0, zIndex: 10, display: 'flex', justifyContent: 'center', gap: 8 }}>
+                  {heroImages.map((img, idx) => (
+                    <span key={img} style={{
+                      width: 12, height: 12, borderRadius: '50%',
+                      background: idx === heroIndex ? '#ffa751' : '#eee',
+                      border: idx === heroIndex ? '2px solid #ffa751' : '2px solid #eee',
+                      display: 'inline-block', transition: 'background 0.3s, border 0.3s',
+                    }} />
+                  ))}
+                </div>
                 <div className="home-hero-overlay" />
                 <div className="home-hero-content">
-                    <div className="home-hero-badge">
-                        <span>🔥 RA MẮT CÔNG NGHỆ UỐN ĐỊNH HÌNH CHUYÊN NAM ĐẦU TIÊN TẠI VIỆT NAM</span>
+                    <h1 className="home-hero-title">SAYHAIR SALON</h1>
+                    <div className="home-hero-announcement animate-in">
+                        ĐẲNG CẤP BARBER 
                     </div>
-                    <h1 className="home-hero-title">BOSS BARBER</h1>
                     <p className="home-hero-subtitle">Nơi phong cách bắt đầu - Nơi nam giới tỏa sáng</p>
                     <button className="home-hero-cta" onClick={() => window.location.href='/booking'}>
                         Đặt lịch ngay
@@ -169,9 +199,13 @@ const Home = () => {
             {/* 3. Spa & Relax */}
             <section className="home-spa animate-in" ref={addToRefs}>
                 <div className="home-section-container">
+                    <div className="home-section-header">
+                        <h2>DỊCH VỤ SPA</h2>
+                        <h3>Thư giãn - Healing</h3>
+                    </div>
                     <div className="home-spa-card" onClick={handleSpaClick}>
                         <div className="home-spa-image">
-                            <img src={spaRelax} alt="Spa & Massage Relax" />
+                            <img src="https://bloganchoi.com/wp-content/uploads/2024/07/lyrics-love-sand-anh-trai-say-hi-4-scaled.jpg" alt="Spa & Massage Relax" />
                         </div>
                         <div className="home-spa-content">
                             <div className="home-spa-badge">💆‍♂️</div>
@@ -196,30 +230,30 @@ const Home = () => {
                         <p>VIBE NÀO CŨNG TỎA SÁNG</p>
                     </div>
                     <div className="home-shine-grid">
-                        <div className="home-shine-main" onClick={() => handleShineCollectionClick('AW 25-26')}>
-                            <img src={shineBanner} alt="SHINE COLLECTION Main" />
+                        <div className="home-shine-main" onClick={() => window.open('https://www.coolmate.me/post/top-nhung-mau-toc-nam-dep-nhat#b-heading-H2-1', '_blank')}>
+                            <img src="https://static2.vieon.vn/vieplay-image/thumbnail_v4/2024/06/06/nxc3b229_1920x1080-atsh-thumb-wean6ba97d1bf9c9797730ff248be89a9331_296_168.jpeg" alt="SHINE COLLECTION Main" />
                             <div className="home-shine-overlay">
-                                <h3>AW 25-26</h3>
+                                <h3>Tóc ngắn nam đẹp</h3>
                                 <p>Xu hướng tóc nam mới nhất</p>
                             </div>
                         </div>
                         <div className="home-shine-items">
-                            <div className="home-shine-item" onClick={() => handleShineCollectionClick('Ready for new game')}>
-                                <img src={shine1} alt="Ready for new game" />
+                            <div className="home-shine-item" onClick={() => window.open('https://www.coolmate.me/post/top-nhung-mau-toc-nam-dep-nhat#b-heading-H2-17', '_blank')}>
+                                <img src="https://static2.vieon.vn/vieplay-image/thumbnail_v4/2024/06/06/owkp09f7_1920x1080-atsh-thumb-tage_296_168.jpeg" alt="Tóc nam dài" />
                                 <div className="home-shine-item-overlay">
-                                    <h4>Ready for new game</h4>
+                                    <h4>Tóc nam dài</h4>
                                 </div>
                             </div>
-                            <div className="home-shine-item" onClick={() => handleShineCollectionClick('Anh trai say hair')}>
-                                <img src={shine2} alt="Anh trai say hair" />
+                            <div className="home-shine-item" onClick={() => window.open('https://www.coolmate.me/post/top-nhung-mau-toc-nam-dep-nhat#b-heading-H2-28', '_blank')}>
+                                <img src="https://static2.vieon.vn/vieplay-image/thumbnail_v4/2024/05/31/z4ahsvb5_1920x1080-atsh-thumb-ht2_296_168.jpeg" alt="Tóc nam theo khuôn mặt" />
                                 <div className="home-shine-item-overlay">
-                                    <h4>Anh trai say hair</h4>
+                                    <h4>Tóc nam theo khuôn mặt</h4>
                                 </div>
                             </div>
-                            <div className="home-shine-item" onClick={() => handleShineCollectionClick('Bad Boy')}>
-                                <img src={shine3} alt="Bad Boy" />
+                            <div className="home-shine-item" onClick={() => window.open('https://www.coolmate.me/post/top-nhung-mau-toc-nam-dep-nhat#b-heading-H2-39', '_blank')}>
+                                <img src="https://static2.vieon.vn/vieplay-image/thumbnail_v4/2024/06/04/rad41n86_1920x1080-atsh-thumb-quanghungmasterd_296_168.jpeg" alt="Tóc nam theo màu nhuộm" />
                                 <div className="home-shine-item-overlay">
-                                    <h4>Bad Boy</h4>
+                                    <h4>Tóc nam theo màu nhuộm</h4>
                                 </div>
                             </div>
                         </div>
@@ -256,7 +290,7 @@ const Home = () => {
                     <div className="home-member-card">
                         <div className="home-member-content">
                             <div className="home-member-badge">👑</div>
-                            <h2>SHINE MEMBER</h2>
+                            <h2>SAYHAIR MEMBER</h2>
                             <p>Tham gia chương trình thành viên để nhận những ưu đãi đặc biệt và quyền lợi vượt trội</p>
                             <ul className="home-member-benefits">
                                 <li>🎯 Giảm giá 10-20% cho mọi dịch vụ</li>
