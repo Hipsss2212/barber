@@ -6,6 +6,7 @@ import {
     clearPasswordState
 } from '../stores/slices/passwordSlice';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const usePasswordService = () => {
     const dispatch = useDispatch();
@@ -39,9 +40,16 @@ const usePasswordService = () => {
         }
     };
 
+    // Gửi email reset password bằng link
+    const forgotPassword = async (email) => {
+        const res = await axios.post('/web/password/forgot', { email });
+        return res.data;
+    };
+
     return {
         requestChangePassword,
-        changePassword
+        changePassword,
+        forgotPassword
     };
 };
 

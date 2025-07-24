@@ -60,6 +60,9 @@ public interface AccountRepo extends JpaRepository<Account, Integer> {
     @Query("select a from Account a where a.email = :email")
     Optional<Account> findByEmail(@Param("email") String email);
 
+    @Query("select a from Account a where a.resetPasswordToken = :token")
+    Optional<Account> findByResetPasswordToken(@Param("token") String token);
+
     @Query("select a from Account a where a.verificationToken = :token")
     Optional<Account> findByVerificationToken(@Param("token") String token);
 }

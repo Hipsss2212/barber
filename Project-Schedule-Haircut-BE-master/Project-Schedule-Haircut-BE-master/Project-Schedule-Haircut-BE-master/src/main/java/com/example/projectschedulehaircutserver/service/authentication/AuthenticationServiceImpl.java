@@ -263,4 +263,35 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         return "Mã xác thực mới đã được gửi lại email.";
     }
 
+    // --- RESET PASSWORD BY EMAIL LINK ---
+    @Override
+    public String forgotPassword(String email) throws CustomerException {
+        Account account = accountRepo.findByEmail(email)
+                .orElseThrow(() -> new CustomerException("Email không tồn tại trong hệ thống."));
+        String token = UUID.randomUUID().toString().replace("-", "");
+        account.setResetPasswordToken(token);
+        account.setResetPasswordTokenExpiry(LocalDateTime.now().plusMinutes(15));
+        accountRepo.save(account);
+        String resetLink = "http://localhost:3001/reset-password?token=" + token;
+        emailService.sendPasswordResetLinkEmail(account.getEmail(), account.getFullName(), resetLink);
+        return "Đã gửi link đặt lại mật khẩu về email. Vui lòng kiểm tra hộp thư.";
+    }
+
+    @Override
+    public String resetPassword(String token, String newPassword) throws CustomerException {
+        Account account = accountRepo.findByResetPasswordToken(token)
+                .orElseThrow(() -> new CustomerException("Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn."));
+        if (account.getResetPasswordTokenExpiry() == null || account.getResetPasswordTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new CustomerException("Link đặt lại mật khẩu đã hết hạn. Vui lòng gửi lại yêu cầu.");
+        }
+        if (encoder.matches(newPassword, account.getPassword())) {
+            throw new CustomerException("Mật khẩu mới không được trùng với mật khẩu cũ.");
+        }
+        account.setPassword(encoder.encode(newPassword));
+        account.setResetPasswordToken(null);
+        account.setResetPasswordTokenExpiry(null);
+        accountRepo.save(account);
+        return "Đổi mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.";
+    }
+
 }

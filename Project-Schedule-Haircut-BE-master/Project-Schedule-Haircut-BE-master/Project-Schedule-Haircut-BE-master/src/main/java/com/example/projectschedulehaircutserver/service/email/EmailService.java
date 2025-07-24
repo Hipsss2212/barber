@@ -176,6 +176,48 @@ public class EmailService {
                 "</html>";
     }
 
+    // Gửi email reset password bằng link
+    @Async
+    public void sendPasswordResetLinkEmail(String toEmail, String customerName, String resetLink) {
+        String subject = "🔐 Đặt lại mật khẩu tài khoản BossBarber";
+        String body = buildPasswordResetLinkEmailTemplate(customerName, resetLink);
+        send(toEmail, subject, body);
+    }
+
+    private String buildPasswordResetLinkEmailTemplate(String customerName, String resetLink) {
+        return "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<style>" +
+                "  body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; }" +
+                "  .container { max-width: 600px; margin: 0 auto; padding: 20px; }" +
+                "  .header { background-color: #4285F4; color: white; padding: 15px; text-align: center; }" +
+                "  .content { padding: 20px; background-color: #f9f9f9; }" +
+                "  .button { display: inline-block; padding: 12px 28px; background: #1976d2; color: #fff; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 18px; margin: 18px 0; }" +
+                "  .footer { margin-top: 20px; font-size: 0.8em; color: #777; text-align: center; }" +
+                "  .note { color: #d32f2f; font-style: italic; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='container'>" +
+                "<div class='header'>" +
+                "<h2>ĐẶT LẠI MẬT KHẨU</h2>" +
+                "</div>" +
+                "<div class='content'>" +
+                "<p>Xin chào <strong>" + customerName + "</strong>,</p>" +
+                "<p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản BossBarber.</p>" +
+                "<p>Vui lòng nhấn vào nút bên dưới để đặt lại mật khẩu:</p>" +
+                "<a class='button' href='" + resetLink + "'>Đặt lại mật khẩu</a>" +
+                "<p class='note'>Link có hiệu lực trong 15 phút. Nếu bạn không yêu cầu, hãy bỏ qua email này.</p>" +
+                "</div>" +
+                "<div class='footer'>" +
+                "<p>Đây là email tự động. Vui lòng không trả lời.</p>" +
+                "</div>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+    }
+
     // Gửi email thông báo lịch hẹn mới đến nhân viên
     @Async
     public void sendBookingNotificationToEmployee(String toEmail, String employeeName,

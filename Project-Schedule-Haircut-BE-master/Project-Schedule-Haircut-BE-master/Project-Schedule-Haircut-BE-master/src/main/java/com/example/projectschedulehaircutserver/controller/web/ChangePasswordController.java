@@ -30,4 +30,17 @@ public class ChangePasswordController {
         );
         return ResponseEntity.ok(result);
     }
+
+    // --- RESET PASSWORD BY EMAIL LINK ---
+    @PostMapping("/forgot")
+    public ResponseEntity<String> forgotPassword(@RequestBody OTPRequest request) throws CustomerException {
+        String result = authenticationService.forgotPassword(request.getEmail());
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<String> resetPassword(@RequestBody com.example.projectschedulehaircutserver.request.ResetPasswordRequest request) throws CustomerException {
+        String result = authenticationService.resetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok(result);
+    }
 }

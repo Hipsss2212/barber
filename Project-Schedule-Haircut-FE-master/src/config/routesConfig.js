@@ -24,6 +24,7 @@ import { Navigate } from 'react-router-dom';
 import AboutUs from '../pages/AboutUs';
 import CouponManagement from '../components/CouponManagement';
 import EmployeeProfile from '../pages/EmployeeProfile';
+import ResetPassword from '../components/ResetPassword';
 
 const routes = [
     {
@@ -177,6 +178,11 @@ const routes = [
                 <AboutUs />
             </MainLayout>
         ),
+        private: false,
+    },
+    {
+        path: '/reset-password',
+        element: <ResetPassword />, 
         private: false,
     },
 ];

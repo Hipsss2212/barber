@@ -23,4 +23,8 @@ public interface AuthenticationService {
     String verifyEmail(String token);
 
     String resendVerificationCode(String email);
+
+    // --- RESET PASSWORD BY EMAIL LINK ---
+    String forgotPassword(String email) throws CustomerException;
+    String resetPassword(String token, String newPassword) throws CustomerException;
 }

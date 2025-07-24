@@ -10,7 +10,7 @@ import { setAuthEmail } from '../stores/slices/actionFormSlice';
 const ForgotPasswordForm = ({ onClose, onBackToLogin, onGoToVerify }) => {
     const [localEmail, setLocalEmail] = useState('');
     const { loading } = useSelector(state => state.password);
-    const { requestChangePassword } = usePasswordService();
+    const { forgotPassword } = usePasswordService();
     const dispatch = useDispatch();
 
     React.useEffect(() => {
@@ -26,26 +26,19 @@ const ForgotPasswordForm = ({ onClose, onBackToLogin, onGoToVerify }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!localEmail) {
             toast.error('Vui lòng nhập địa chỉ email');
             return;
         }
-
         if (!validateEmail(localEmail)) {
             toast.error('Email không hợp lệ');
             return;
         }
-
         try {
-            const { message } = await requestChangePassword(localEmail);
-            dispatch(setAuthEmail(localEmail));
+            const message = await forgotPassword(localEmail);
             toast.success(message);
-            setTimeout(() => {
-                onGoToVerify(localEmail);
-            }, [2000]);
         } catch (err) {
-            toast.error(err);
+            toast.error(err?.response?.data || 'Gửi link đặt lại mật khẩu thất bại.');
         }
     };
 
