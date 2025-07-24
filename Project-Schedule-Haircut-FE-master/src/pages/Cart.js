@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useCartService from '../services/cartService';
+import useBookedService from '../services/bookedService';
+import { toast } from 'react-toastify';
 import '../assets/css/Cart.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 const Cart = () => {
     const { items, loading, error } = useSelector(state => state.cart);
     const { fetchCartItems, deleteItems } = useCartService();
+    const { getBookedByStatus } = useBookedService();
     const [selectedItems, setSelectedItems] = useState({});
     const [localLoading, setLocalLoading] = useState(false);
     const navigate = useNavigate();
@@ -88,9 +91,21 @@ const Cart = () => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     };
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
         const selectedServices = items.filter(item => selectedItems[item.cartItemId]);
         if (selectedServices.length === 0) return;
+
+        // Kiểm tra lịch chưa hoàn thành
+        try {
+            const pendingBookings = await getBookedByStatus(0); // status 0: chờ xác nhận
+            if (pendingBookings && pendingBookings.length > 0) {
+                toast.error('Bạn đang có lịch chưa hoàn thành. Vui lòng hoàn thành hoặc hủy lịch trước khi đặt lịch mới.');
+                return;
+            }
+        } catch (err) {
+            toast.error('Không thể kiểm tra trạng thái lịch. Vui lòng thử lại.');
+            return;
+        }
 
         navigate('/booking', { state: { services: selectedServices } });
     };
@@ -107,7 +122,7 @@ const Cart = () => {
         );
     }
 
-    if (error) return <div className="error">{error}</div>;
+    if (error) return <div className="error">{typeof error === 'string' ? error : error?.message || 'Có lỗi xảy ra'}</div>;
 
     return (
         <>

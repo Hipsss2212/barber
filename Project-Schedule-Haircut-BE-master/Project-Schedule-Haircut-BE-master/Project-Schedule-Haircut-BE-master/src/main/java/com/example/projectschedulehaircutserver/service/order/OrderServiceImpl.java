@@ -67,7 +67,8 @@ public class OrderServiceImpl implements OrderService{
                     List<Orders> orders = orderRepo.findAllOrderBooking(employee.getId());
                     if (!orders.isEmpty()) {
                         for (Orders o : orders) {
-                            if (o.getOrderDate().equals(request.getOrderDate()) &&
+                            if (o.getStatus() != -1 &&
+                                o.getOrderDate().equals(request.getOrderDate()) &&
                                     isTimeBetween(request.getOrderStartTime(), o.getOrderStartTime(), o.getOrderEndTime())) {
                                 throw new OrderException(
                                         "Nhân viên bạn muốn đặt lịch hiện đang có lịch trùng với lịch hẹn của bạn, vui lòng chọn ngày khác hoặc thay đổi giờ",
@@ -263,6 +264,8 @@ public class OrderServiceImpl implements OrderService{
                 emailService.send(order.getCustomer().getEmail(), subject, content);
             }
         }
+
+        // Nếu là hoàn thành (status == 2), chỉ cho phép sau khi dịch vụ kết thúc
 
         Customer customer = order.getCustomer();
 
@@ -493,6 +496,24 @@ public class OrderServiceImpl implements OrderService{
             orderRepo.save(appointment);
 
             String subject = "❌ Lịch hẹn đã bị huỷ do không thanh toán";
+            String content = buildCancellationContent(appointment);
+            emailService.send(appointment.getCustomer().getEmail(), subject, content);
+        });
+    }
+
+    // Huỷ lịch đã xác nhận nhưng quá giờ chưa thanh toán (chạy mỗi 5 phút)
+    @Scheduled(cron = "0 */5 * * * ?")
+    public void cancelOverdueAppointments() {
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+        // Lấy các đơn đã xác nhận, ngày hôm nay, kết thúc trước thời điểm hiện tại
+        List<Orders> overdueAppointments = orderRepo.findByStatusAndOrderDateAndOrderEndTimeBefore(
+            Orders.STATUS_CONFIRMED, today, now
+        );
+        overdueAppointments.forEach(appointment -> {
+            appointment.setStatus(Orders.STATUS_CANCELLED);
+            orderRepo.save(appointment);
+            String subject = "❌ Lịch hẹn đã bị huỷ do quá giờ không thanh toán";
             String content = buildCancellationContent(appointment);
             emailService.send(appointment.getCustomer().getEmail(), subject, content);
         });

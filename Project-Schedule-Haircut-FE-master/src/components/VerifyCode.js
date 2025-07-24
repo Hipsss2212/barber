@@ -135,7 +135,7 @@ const VerifyCodeForm = ({ onBack, onSuccess }) => {
                         </button>
                     </div>
 
-                    {error && <div className="error-message">{error}</div>}
+                    {error && <div className="error-message">{typeof error === 'string' ? error : error?.message || 'Có lỗi xảy ra'}</div>}
                 </form>
 
                 <div className="verify-footer">

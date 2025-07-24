@@ -109,7 +109,7 @@ const RegisterForm = ({ onClose, onSwitchToLogin }) => {
             <button className="close-button" onClick={onClose}>×</button>
             <h2 className="register-title">ĐĂNG KÝ</h2>
 
-            {error && <div className="error-message" style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
+            {error && <div className="error-message" style={{ color: 'red', marginBottom: 8 }}>{typeof error === 'string' ? error : error?.message || 'Có lỗi xảy ra'}</div>}
 
             <div className="register-content">
 

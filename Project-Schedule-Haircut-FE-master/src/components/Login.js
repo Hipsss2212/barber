@@ -139,7 +139,7 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
 
             {/* Chỉ render error nếu KHÔNG phải lỗi đăng nhập nơi khác hoặc bị khóa */}
             {error && !error.includes('Tài khoản đã đăng nhập ở thiết bị khác') && !error.includes('Tài khoản của bạn bị khóa') && (
-                <div className="error-message">{error}</div>
+                <div className="error-message">{typeof error === 'string' ? error : error?.message || 'Có lỗi xảy ra'}</div>
             )}
 
             <div className="login-fields">

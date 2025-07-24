@@ -62,7 +62,7 @@ const StaffLoginForm = () => {
         <div className="staff-login-container">
             <h2 className="staff-login-title">ĐĂNG NHẬP NHÂN VIÊN</h2>
 
-            {error && <div className="staff-login-error-message">{error}</div>}
+            {error && <div className="staff-login-error-message">{typeof error === 'string' ? error : error?.message || 'Có lỗi xảy ra'}</div>}
 
             <div className="staff-login-fields">
                 <div className="staff-login-input-group">

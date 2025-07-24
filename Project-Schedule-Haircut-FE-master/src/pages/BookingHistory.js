@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import haircutImg from '../assets/image/logo.png';
 import useBookedService from '../services/bookedService';
-import useVnPayService, { useVnPay } from '../services/vnpayService'; // Import the VNPay service
+import useVnPayService, { useVnPay } from '../services/vnpayService'; 
 import { ClipLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
 import useOrderService from '../services/orderService';
@@ -14,6 +14,7 @@ import { Modal } from 'antd';
 import useProfileService from '../services/profileService';
 import { getFeedbackByCustomer } from '../services/feedbackService';
 import { Rate } from 'antd';
+import dayjs from 'dayjs';
 
 const BookingHistory = () => {
     const [bookings, setBookings] = useState([]);
@@ -106,6 +107,14 @@ const BookingHistory = () => {
         const bookingDateTime = new Date(`${orderDate}T${orderTime}`);
         const timeDiff = bookingDateTime - now;
         return timeDiff <= 3600000; // 1h
+    };
+
+    // Kiểm tra có thể huỷ không: còn cách giờ bắt đầu >= 1 tiếng
+    const canCancel = (booking) => {
+        const now = dayjs();
+        const bookingDate = dayjs(booking.orderDate);
+        const bookingStart = bookingDate.hour(Number(booking.orderStartTime.substring(0,2))).minute(Number(booking.orderStartTime.substring(3,5)));
+        return booking.status === 1 && bookingStart.diff(now, 'hour', true) >= 1;
     };
 
     const handleShowFeedback = async () => {
@@ -201,32 +210,33 @@ const BookingHistory = () => {
                                     </div>
                                     <div className="price-action">
                                         <span>{booking.totalPrice.toLocaleString()} VNĐ</span>
-                                        {/* Nếu đã hoàn thành (status === 2) thì chỉ hiện nút Thanh toán, ẩn nút Huỷ lịch */}
-                                        {activeStatus === 1 && booking.status === 2 ? (
+                                        {/* Chỉ hiện nút Thanh toán nếu trạng thái là 3 (chờ thanh toán) */}
+                                        {booking.status === 3 && (
                                             <button
+                                                className="payment-button"
                                                 onClick={() => handlePayment(booking)}
                                                 disabled={paymentLoading === booking.id}
-                                                className="payment-button"
                                             >
                                                 {paymentLoading === booking.id ? (
-                                                    <ClipLoader size={20} color="#fff" />
-                                                ) : 'Thanh toán'}
+                                                    <ClipLoader size={15} color="#fff" />
+                                                ) : (
+                                                    'Thanh toán'
+                                                )}
                                             </button>
-                                        ) : (
-                                            // Nếu chưa hoàn thành thì vẫn hiện nút Huỷ lịch như cũ
-                                            (activeStatus === 0 || (activeStatus === 1 && !isWithinOneHour(booking.orderDate, booking.orderStartTime))) && (
-                                                <button
-                                                    onClick={() => handleCancel(booking.id, -1)}
-                                                    disabled={cancelLoadingId === booking.id}
-                                                    className="cancel-button"
-                                                >
-                                                    {cancelLoadingId === booking.id ? (
-                                                        <ClipLoader size={20} color="#fff" />
-                                                    ) : (
-                                                        'Huỷ lịch'
-                                                    )}
-                                                </button>
-                                            )
+                                        )}
+                                        {/* Nút huỷ lịch cho khách hàng nếu còn cách giờ bắt đầu >= 1 tiếng */}
+                                        {canCancel(booking) && (
+                                            <button
+                                                className="cancel-button"
+                                                onClick={() => handleCancel(booking.id, -1)}
+                                                disabled={cancelLoadingId === booking.id}
+                                            >
+                                                {cancelLoadingId === booking.id ? (
+                                                    <ClipLoader size={15} color="#fff" />
+                                                ) : (
+                                                    'Huỷ lịch'
+                                                )}
+                                            </button>
                                         )}
 
                                         {activeStatus === 2 && (

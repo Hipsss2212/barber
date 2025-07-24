@@ -44,6 +44,10 @@ public class WorkDoneServiceImpl implements WorkDoneService{
 
                 workDoneRepo.save(workDone);
 
+                // Sau khi thêm công việc đã làm, cập nhật trạng thái đơn hàng sang chờ thanh toán
+                orders.setStatus(Orders.STATUS_WAITING_PAYMENT);
+                orderRepo.save(orders);
+
                 return "Thêm công việc đã làm thành công";
             } catch (Exception e){
                 throw new RuntimeException(e.getMessage());

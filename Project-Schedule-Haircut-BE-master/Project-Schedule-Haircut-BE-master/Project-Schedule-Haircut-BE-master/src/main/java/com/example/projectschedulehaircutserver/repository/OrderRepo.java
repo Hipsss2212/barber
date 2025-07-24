@@ -65,6 +65,13 @@ public interface OrderRepo extends JpaRepository<Orders, Integer> {
             @Param("date") LocalDate date
     );
 
+    @Query("SELECT o FROM Orders o WHERE o.status = :status AND o.orderDate = :date AND o.orderEndTime < :endTime")
+    List<Orders> findByStatusAndOrderDateAndOrderEndTimeBefore(
+        @Param("status") int status,
+        @Param("date") LocalDate date,
+        @Param("endTime") LocalTime endTime
+    );
+
     @Query("select count(o) > 0 from Orders o where o.customer.id = :customerId and o.status in (0, 1)")
     boolean existsByCustomerId(@Param("customerId") Integer customerId);
 }

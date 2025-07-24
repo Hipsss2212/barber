@@ -76,7 +76,7 @@ const AdminLoginForm = () => {
         <div className="admin-login-container">
             <h2 className="admin-login-title">ĐĂNG NHẬP QUẢN TRỊ</h2>
 
-            {error && <div className="admin-login-error-message">{error}</div>}
+            {error && <div className="admin-login-error-message">{typeof error === 'string' ? error : error?.message || 'Có lỗi xảy ra'}</div>}
 
             <div className="admin-login-fields">
                 <div className="admin-login-input-group">

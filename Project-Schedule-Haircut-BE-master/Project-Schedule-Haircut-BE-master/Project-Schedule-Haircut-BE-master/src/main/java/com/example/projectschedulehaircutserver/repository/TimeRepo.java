@@ -23,6 +23,7 @@ public interface TimeRepo extends JpaRepository<Time, Integer> {
                     JOIN order_employee oe ON o.id = oe.order_id
                     WHERE oe.employee_id = :employeeId
                     AND o.order_date = :orderDate
+                    AND o.status != -1
                     AND TIME(t.time_name) BETWEEN o.order_start_time AND o.order_end_time
                 ) THEN 1
                 ELSE 0

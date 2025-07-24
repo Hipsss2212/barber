@@ -62,6 +62,12 @@ public class Orders {
             inverseJoinColumns = @JoinColumn(name = "employee_id"))
     private Set<Employee> employees = new HashSet<>();
 
+    // Trạng thái đơn hàng
+    public static final int STATUS_CONFIRMED = 1; // Đã xác nhận
+    public static final int STATUS_CANCELLED = -1; // Đã hủy
+    public static final int STATUS_PAID = 2; // Đã thanh toán
+    public static final int STATUS_WAITING_PAYMENT = 3; // Đã hoàn thành, chờ thanh toán
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;

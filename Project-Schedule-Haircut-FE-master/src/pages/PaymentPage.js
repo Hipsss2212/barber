@@ -41,6 +41,11 @@ const PaymentPage = () => {
             toast.error('Thông tin đơn hàng không hợp lệ');
             navigate('/bookings');
         }
+        // Chỉ cho phép thanh toán nếu trạng thái là 2 (hoàn thành)
+        if (bookingDetails && bookingDetails.status !== 2) {
+            toast.error('Chỉ có thể thanh toán khi dịch vụ đã hoàn thành.');
+            navigate('/booking-history');
+        }
     }, [bookingDetails, serviceInfo, navigate]);
 
     const handlePayment = async () => {

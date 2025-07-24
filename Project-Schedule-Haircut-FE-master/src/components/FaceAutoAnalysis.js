@@ -127,7 +127,7 @@ const FaceAutoAnalysis = ({ onResult, onClose = null, noOverlay }) => {
           </button>
         )}
         {isProcessing && <div style={{ color: '#1976d2', fontWeight: 500, margin: '14px 0', fontSize: 16 }}>Đang xử lý...</div>}
-        {error && <div style={{ color: 'red', fontWeight: 500, margin: '14px 0', fontSize: 15 }}>{error}</div>}
+        {error && <div style={{ color: 'red', fontWeight: 500, margin: '14px 0', fontSize: 15 }}>{typeof error === 'string' ? error : error?.message || 'Có lỗi xảy ra'}</div>}
         {analysisResult && (
           <div style={{ marginTop: 10, width: '100%' }}>
             <div style={{ color: '#388e3c', fontWeight: 700, fontSize: 19, marginBottom: 6 }}>
