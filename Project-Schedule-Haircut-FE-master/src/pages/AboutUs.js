@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './AboutUs.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,6 +7,8 @@ import value1 from '../assets/image/stylist1.png';
 import value2 from '../assets/image/stylist2.png';
 import value3 from '../assets/image/barber2.jpg';
 import value4 from '../assets/image/barber3.jpg';
+import axiosClient from '../config/axios';
+import { Rate, Spin } from 'antd';
 
 const coreValues = [
   {
@@ -32,6 +34,21 @@ const coreValues = [
 ];
 
 const AboutUs = () => {
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function fetchFeedbacks() {
+      try {
+        const res = await axiosClient.get('/api/feedback/all');
+        setFeedbacks(res);
+      } catch {
+        setFeedbacks([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchFeedbacks();
+  }, []);
   return (
     <div className="aboutus-root">
       <Header />

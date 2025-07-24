@@ -53,6 +53,7 @@ const LoginForm = ({ onClose, onSwitchToRegister, onSwitchToForgotPassword }) =>
                     username: user.username,
                     isAuthenticated: true,
                 }));
+                localStorage.setItem('username', user.username);
 
                 // Lưu customerId nếu là khách hàng
                 if (user.role === 'ROLE_USER') {

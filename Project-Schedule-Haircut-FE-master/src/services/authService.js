@@ -44,15 +44,18 @@ const useAuthService = () => {
         try {
             const resultAction = await dispatch(logoutAction());
             if (logoutAction.fulfilled.match(resultAction)) {
+                window.location.href = 'http://localhost:3001/home';
                 return resultAction.payload;
             } else {
                 const errorData = resultAction.payload;
                 const errorMsg = typeof errorData === 'string'
                     ? errorData
                     : errorData?.message || 'Đăng xuất thất bại';
+                window.location.href = 'http://localhost:3001/home';
                 throw new Error(errorMsg);
             }
         } catch (error) {
+            window.location.href = 'http://localhost:3001/home';
             throw error;
         }
     };

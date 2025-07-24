@@ -4,6 +4,7 @@ import com.example.projectschedulehaircutserver.entity.Comment;
 import java.util.List;
 
 public interface CommentService {
-    List<Comment> getCommentsByEmployee(Integer employeeId);
-    Comment addComment(Comment comment);
+    Comment addComment(String content, Float rating, Integer customerId);
+    List<Comment> getCommentsByCustomerId(Integer customerId);
+    List<Comment> getAllComments();
 } 

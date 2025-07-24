@@ -36,45 +36,19 @@ const useStaffService = () => {
             // Đăng xuất authSlice luôn
             dispatch(clearAuth());
 
-            if (staffLogout.fulfilled.match(resultAction)) {
-                toast.success('Đăng xuất thành công');
-                navigate('/home');
-                return true;
-            } else {
-                // Handle specific error cases
-                const errorData = resultAction.payload;
-                
-                // If it's a 500 error, we'll still log the user out locally
-                if (errorData?.status === 500) {
-                    console.warn('Backend staff logout failed with 500 error, logging out locally');
-                    toast.warn('Đăng xuất khỏi máy chủ thất bại, nhưng đã đăng xuất khỏi ứng dụng');
-                    
-                    // Clear cookies
-                    Cookies.remove('accessToken');
-                    Cookies.remove('username');
-                    Cookies.remove('role');
-                    
-                    navigate('/home');
-                    return true;
-                }
-                
-                throw new Error(errorData?.message || 'Đăng xuất nhân viên thất bại');
-            }
+            window.location.href = 'http://localhost:3001/home';
+            return true;
         } catch (error) {
-            console.error('Staff logout service error:', error);
-            
             // Fallback: clear local state even if there's an error
             try {
                 // Clear cookies
                 Cookies.remove('accessToken');
                 Cookies.remove('username');
                 Cookies.remove('role');
-                
-                toast.warn('Đã đăng xuất khỏi ứng dụng');
-                navigate('/home');
+                window.location.href = 'http://localhost:3001/home';
                 return true;
             } catch (fallbackError) {
-                console.error('Fallback staff logout error:', fallbackError);
+                window.location.href = 'http://localhost:3001/home';
                 throw new Error(error.message || 'Đăng xuất nhân viên thất bại');
             }
         }

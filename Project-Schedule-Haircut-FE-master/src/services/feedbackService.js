@@ -1,7 +1,7 @@
 import axiosClient from '../config/axios';
 
-export const getCommentsByEmployee = (employeeId) =>
-  axiosClient.get(`/api/comments/employee/${employeeId}`);
+export const addFeedback = (data) =>
+  axiosClient.post('/api/feedback', data);
 
-export const addComment = (data) =>
-  axiosClient.post('/api/comments', data); 
+export const getFeedbackByCustomer = (customerId) =>
+  axiosClient.get(`/api/feedback/${customerId}`); 

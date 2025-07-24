@@ -11,6 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import useOrderService from '../services/orderService';
 import FeedbackForm from '../components/FeedbackForm';
 import { Modal } from 'antd';
+import useProfileService from '../services/profileService';
+import { getFeedbackByCustomer } from '../services/feedbackService';
+import { Rate } from 'antd';
 
 const BookingHistory = () => {
     const [bookings, setBookings] = useState([]);
@@ -24,7 +27,27 @@ const BookingHistory = () => {
     const [openFeedback, setOpenFeedback] = useState(false);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
     const [selectedBooking, setSelectedBooking] = useState(null);
-    const customerId = localStorage.getItem('customerId'); // Hoặc lấy từ context nếu có
+    const [customerId, setCustomerId] = useState(null);
+    const { getProfile } = useProfileService();
+    const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+    const [latestFeedback, setLatestFeedback] = useState(null);
+
+    useEffect(() => {
+        // Lấy customerId từ API profile
+        async function fetchCustomerId() {
+            try {
+                // Lấy username từ localStorage hoặc redux (tùy hệ thống)
+                const username = localStorage.getItem('username');
+                if (username) {
+                    const profile = await getProfile(username);
+                    setCustomerId(profile.id);
+                }
+            } catch (e) {
+                setCustomerId(null);
+            }
+        }
+        fetchCustomerId();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -85,6 +108,24 @@ const BookingHistory = () => {
         return timeDiff <= 3600000; // 1h
     };
 
+    const handleShowFeedback = async () => {
+        if (!customerId) return;
+        try {
+            const res = await getFeedbackByCustomer(customerId);
+            if (res && res.length > 0) {
+                // Lấy feedback mới nhất
+                const sorted = res.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setLatestFeedback(sorted[0]);
+            } else {
+                setLatestFeedback(null);
+            }
+            setFeedbackModalOpen(true);
+        } catch {
+            setLatestFeedback(null);
+            setFeedbackModalOpen(true);
+        }
+    };
+
     if (loading) {
         return (
             <>
@@ -134,7 +175,9 @@ const BookingHistory = () => {
                                         alt={booking.serviceName[0]}
                                     />
                                     <div className="details">
-                                        <h3>{booking.serviceName.join(', ')}</h3>
+                                        <h3 style={{ cursor: 'pointer', color: '#1677ff', textDecoration: 'underline' }} onClick={handleShowFeedback}>
+                                            {booking.serviceName.join(', ')}
+                                        </h3>
                                         <div className="booking-info">
                                             <div className="info-row">
                                                 <span className="info-label">Ngày đặt:</span>
@@ -198,7 +241,6 @@ const BookingHistory = () => {
                                                     ) : 'Thanh toán'}
                                                 </button>
                                                 <button className="review-button" onClick={() => {
-                                                    setSelectedEmployeeId(booking.employeeId);
                                                     setSelectedBooking(booking);
                                                     setOpenFeedback(true);
                                                 }}>
@@ -208,17 +250,18 @@ const BookingHistory = () => {
                                                     open={openFeedback && selectedBooking && selectedBooking.id === booking.id}
                                                     onCancel={() => setOpenFeedback(false)}
                                                     footer={null}
-                                                    title="Đánh giá nhân viên"
+                                                    title="Đánh giá dịch vụ"
                                                     destroyOnClose
                                                 >
-                                                    {booking.employeeId ? (
+                                                    {customerId ? (
                                                         <FeedbackForm
-                                                            employeeId={booking.employeeId}
                                                             customerId={customerId}
                                                             onSuccess={() => setOpenFeedback(false)}
                                                         />
                                                     ) : (
-                                                        <div style={{ color: 'red' }}>Không xác định được nhân viên để đánh giá!</div>
+                                                        <div style={{ color: 'red', textAlign: 'center' }}>
+                                                            Không xác định được khách hàng để đánh giá!
+                                                        </div>
                                                     )}
                                                 </Modal>
                                             </>
@@ -235,6 +278,23 @@ const BookingHistory = () => {
                 </div>
             </main>
             <Footer />
+            <Modal
+                open={feedbackModalOpen}
+                onCancel={() => setFeedbackModalOpen(false)}
+                footer={null}
+                title="Feedback của bạn"
+                destroyOnClose
+            >
+                {latestFeedback ? (
+                    <div>
+                        <Rate value={latestFeedback.rating} disabled />
+                        <div style={{ margin: '8px 0' }}>{latestFeedback.content}</div>
+                        <div style={{ fontSize: 12, color: '#888' }}>Ngày gửi: {new Date(latestFeedback.createdAt).toLocaleString()}</div>
+                    </div>
+                ) : (
+                    <div style={{ color: 'red', textAlign: 'center' }}>Bạn chưa có feedback nào.</div>
+                )}
+            </Modal>
         </>
     );
 };

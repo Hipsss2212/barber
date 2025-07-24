@@ -7,6 +7,8 @@ import { fetchAllCategories } from '../stores/slices/categorySlice';
 import { fetchAllEmployees } from "../stores/slices/employeeSlice";
 import AuthModal from "../components/AuthModal";
 import useScrollAnimation from "../components/useScrollAnimation";
+import axiosClient from '../config/axios';
+import { Rate, Spin } from 'antd';
 
 // Import images
 import heroBanner from "../assets/image/banner.png";
@@ -34,6 +36,8 @@ const Home = () => {
     const dispatch = useDispatch();
     const { categories, loading, error } = useSelector(state => state.categories);
     const { employees } = useSelector(state => state.employees);
+    const [feedbacks, setFeedbacks] = useState([]);
+    const [loadingFeedback, setLoadingFeedback] = useState(true);
 
     // Auto slide hero images
     useEffect(() => {
@@ -47,6 +51,20 @@ const Home = () => {
         dispatch(fetchAllCategories());
         dispatch(fetchAllEmployees());
     }, [dispatch]);
+
+    useEffect(() => {
+        async function fetchFeedbacks() {
+            try {
+                const res = await axiosClient.get('/api/feedback/all');
+                setFeedbacks(res);
+            } catch {
+                setFeedbacks([]);
+            } finally {
+                setLoadingFeedback(false);
+            }
+        }
+        fetchFeedbacks();
+    }, []);
 
     // Lấy categories thực tế từ Redux store
     const haircutCategories = categories.filter(cat => cat.type === "HAIRCUT");
@@ -261,26 +279,35 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* 5. Stylist */}
-            <section className="home-stylists animate-in" ref={addToRefs}>
+            {/* Thay section stylist bằng feedback */}
+            <section className="home-feedback-section animate-in" ref={addToRefs}>
                 <div className="home-section-container">
                     <div className="home-section-header">
-                        <h2>ĐỘI NGŨ STYLIST</h2>
-                        <p>Chuyên nghiệp - Kinh nghiệm - Tận tâm</p>
+                        <h2>KHÁCH HÀNG NÓI GÌ?</h2>
+                        <p>Trải nghiệm thực tế từ khách hàng của chúng tôi</p>
                     </div>
-                    <div className="home-stylists-grid">
-                        {stylists.map((stylist, index) => (
-                            <div className="home-stylist-card" key={stylist.id}>
-                                <div className="home-stylist-avatar">
-                                    <img src={stylist.avatar} alt={stylist.name} />
+                    {loadingFeedback ? (
+                        <div style={{ textAlign: 'center', margin: 32 }}><Spin size="large" /></div>
+                    ) : feedbacks.length === 0 ? (
+                        <div style={{ textAlign: 'center', color: 'gray' }}>Chưa có feedback nào.</div>
+                    ) : (
+                        <div className="home-feedback-list">
+                            {feedbacks.map(fb => (
+                                <div className="home-feedback-card" key={fb.id}>
+                                    <Rate value={fb.rating} disabled style={{ fontSize: 18 }} />
+                                    <div style={{ margin: '8px 0', fontStyle: 'italic' }}>
+                                        "{fb.content}"
+                                    </div>
+                                    <div style={{ fontSize: 12, color: '#888' }}>
+                                        {fb.createdAt ? new Date(fb.createdAt).toLocaleString() : ''}
+                                    </div>
+                                    <div style={{ fontSize: 13, color: '#1677ff', marginTop: 4 }}>
+                                        Khách hàng #{fb.customerId}
+                                    </div>
                                 </div>
-                                <div className="home-stylist-info">
-                                    <h3>{stylist.name}</h3>
-                                    <p>{stylist.area}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 
