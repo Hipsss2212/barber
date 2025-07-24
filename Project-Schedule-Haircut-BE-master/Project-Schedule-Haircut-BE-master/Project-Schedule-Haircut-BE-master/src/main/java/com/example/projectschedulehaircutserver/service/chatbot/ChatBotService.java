@@ -4,6 +4,4 @@ import com.example.projectschedulehaircutserver.exeption.LoginException;
 
 public interface ChatBotService {
     String processMessage(String message) throws LoginException;
-
-
 }
