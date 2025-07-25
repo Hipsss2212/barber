@@ -8,6 +8,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { ClipLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
+import axiosClient from '../config/axios';
 
 const Cart = () => {
     const { items, loading, error } = useSelector(state => state.cart);
@@ -16,6 +17,10 @@ const Cart = () => {
     const [selectedItems, setSelectedItems] = useState({});
     const [localLoading, setLocalLoading] = useState(false);
     const navigate = useNavigate();
+    const [coupon, setCoupon] = useState('');
+    const [couponValid, setCouponValid] = useState(null);
+    const [couponDiscount, setCouponDiscount] = useState(0);
+    const [validatingCoupon, setValidatingCoupon] = useState(false);
 
     useEffect(() => {
         const loadCartItems = async () => {
@@ -77,10 +82,36 @@ const Cart = () => {
         }
     };
 
+    const handleApplyCoupon = async () => {
+        setValidatingCoupon(true);
+        try {
+            const res = await axiosClient.get(`/api/coupons/validate?name=${coupon}`);
+            if (res.valid) {
+                setCouponValid(true);
+                // Lấy chi tiết coupon để lấy % giảm giá
+                const detail = await axiosClient.get(`/api/coupons`);
+                const found = detail.find(c => c.name === coupon);
+                setCouponDiscount(found ? found.discount : 0);
+            } else {
+                setCouponValid(false);
+                setCouponDiscount(0);
+            }
+        } catch {
+            setCouponValid(false);
+            setCouponDiscount(0);
+        } finally {
+            setValidatingCoupon(false);
+        }
+    };
+
     const calculateSelectedTotal = () => {
-        return items
+        const total = items
             .filter(item => selectedItems[item.cartItemId])
             .reduce((sum, item) => sum + item.price, 0);
+        if (couponValid && couponDiscount > 0) {
+            return total - (total * couponDiscount);
+        }
+        return total;
     };
 
     const countSelectedItems = () => {
@@ -107,7 +138,7 @@ const Cart = () => {
             return;
         }
 
-        navigate('/booking', { state: { services: selectedServices } });
+        navigate('/booking', { state: { services: selectedServices, couponCode: couponValid ? coupon : undefined, couponDiscount: couponValid ? couponDiscount : undefined } });
     };
 
     if (loading || localLoading) {
@@ -173,7 +204,7 @@ const Cart = () => {
                                         <td>
                                             <input
                                                 type="checkbox"
-                                                checked={selectedItems[item.cartItemId] || false}
+                                                checked={!!selectedItems[item.cartItemId]}
                                                 onChange={() => handleCheckboxChange(item.cartItemId)}
                                             />
                                         </td>
@@ -196,13 +227,46 @@ const Cart = () => {
                             )}
                         </tbody>
                     </table>
-                    <div className="header__voucher">
-                        <label htmlFor="voucher">Mã Voucher:</label>
-                        <input type="text" id="voucher" placeholder="Nhập mã để giảm giá" />
+                    {/* Thêm giao diện nhập mã coupon */}
+                    <div className="coupon-section" style={{ margin: '24px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <input
+                            type="text"
+                            placeholder="Nhập mã giảm giá"
+                            value={coupon}
+                            onChange={e => setCoupon(e.target.value)}
+                            disabled={validatingCoupon}
+                            style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', minWidth: 180 }}
+                        />
+                        <button
+                            onClick={handleApplyCoupon}
+                            disabled={validatingCoupon || !coupon}
+                            style={{ padding: '8px 16px', borderRadius: 4, background: '#1677ff', color: '#fff', border: 'none', cursor: 'pointer' }}
+                        >
+                            {validatingCoupon ? 'Đang kiểm tra...' : 'Áp dụng'}
+                        </button>
+                        {couponValid === true && (
+                            <span style={{ color: 'green', marginLeft: 8 }}>Mã hợp lệ! Giảm {couponDiscount * 100}%</span>
+                        )}
+                        {couponValid === false && (
+                            <span style={{ color: 'red', marginLeft: 8 }}>Mã không hợp lệ hoặc đã hết hạn</span>
+                        )}
                     </div>
+                    {/* Hiển thị số tiền giảm nếu có mã hợp lệ */}
+                    {couponValid && couponDiscount > 0 && (
+                        <div style={{ color: '#1677ff', fontWeight: 500, marginBottom: 8 }}>
+                            Đã giảm: -{formatCurrency(
+                                items.filter(item => selectedItems[item.cartItemId])
+                                    .reduce((sum, item) => sum + item.price, 0) * couponDiscount
+                            )}
+                        </div>
+                    )}
+                    {/* Đã xóa phần nhập mã voucher/coupon */}
                     <div className="header__total">
                         Tổng cộng ({countSelectedItems()} dịch vụ):
                         <span id="total"> {formatCurrency(calculateSelectedTotal())}</span>
+                        {couponValid && couponDiscount > 0 && (
+                            <span className="coupon-discount-info">(Đã giảm {couponDiscount * 100}%)</span>
+                        )}
                         <button
                             className="btn"
                             onClick={handleCheckout}

@@ -22,6 +22,7 @@ import TransactionManagement from '../components/TransactionManagement';
 import useAuthService from '../services/authService';
 import Cookies from 'js-cookie';
 import AccountManagement from '../components/AccountManagement';
+import CouponManagement from '../components/CouponManagement';
 
 const { Header, Content, Sider } = Layout;
 
@@ -59,7 +60,7 @@ const AdminHome = () => {
         },
         {
             key: '6',
-            icon: <ShoppingOutlined />,
+            icon: <Link to="/admin/coupons">Quản lý Coupon</Link>,
             label: <Link to="/admin/coupons">Quản lý Coupon</Link>,
         },
     ];
@@ -139,6 +140,7 @@ const AdminHome = () => {
                         <Route path="schedules" element={<ScheduleManagement />} />
                         <Route path="services" element={<ServiceManagement />} />
                         <Route path="transactions" element={<TransactionManagement />} />
+                        <Route path="coupons" element={<CouponManagement />} />
                     </Routes>
                     <Outlet />
                 </Content>

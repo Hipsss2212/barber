@@ -45,6 +45,12 @@ public class Orders {
     @Column(name = "order_end_time", nullable = false)
     private LocalTime orderEndTime;
 
+    @Column(name = "coupon_code")
+    private String couponCode;
+
+    @Column(name = "coupon_discount")
+    private Float couponDiscount;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     @JoinColumn(name = "customer_id", nullable = false)

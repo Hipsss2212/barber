@@ -25,7 +25,9 @@ public interface OrderRepo extends JpaRepository<Orders, Integer> {
             "c2.name AS combo_name, " +
             "s.name AS service_name, " +
             "o.total_price, " +
-            "o.status " +
+            "o.status, " +
+            "o.coupon_code, " +
+            "o.coupon_discount " +
             "FROM orders o " +
             "JOIN customer c ON c.id = o.customer_id " +
             "JOIN orderitem oi ON o.id = oi.order_id " +

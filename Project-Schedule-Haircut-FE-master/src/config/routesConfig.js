@@ -22,9 +22,9 @@ import AccountManagement from '../components/AccountManagement';
 import VerifyEmail from '../components/VerifyEmail';
 import { Navigate } from 'react-router-dom';
 import AboutUs from '../pages/AboutUs';
-import CouponManagement from '../components/CouponManagement';
 import EmployeeProfile from '../pages/EmployeeProfile';
 import ResetPassword from '../components/ResetPassword';
+import CouponManagement from '../components/CouponManagement';
 
 const routes = [
     {

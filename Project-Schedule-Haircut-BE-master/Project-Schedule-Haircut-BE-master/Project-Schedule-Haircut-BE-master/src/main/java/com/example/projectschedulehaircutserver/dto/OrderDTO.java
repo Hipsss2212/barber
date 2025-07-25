@@ -26,7 +26,8 @@ public class OrderDTO {
     private List<String> serviceName;
     private BigDecimal totalPrice;
     private Integer status;
-
+    private String couponCode;
+    private Float couponDiscount;
 
 
 }

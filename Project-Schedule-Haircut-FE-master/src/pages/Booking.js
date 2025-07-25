@@ -28,6 +28,8 @@ const Booking = () => {
 
     const [currentStep, setCurrentStep] = useState(1);
     const [hasSpaService, setHasSpaService] = useState(false);
+    const [couponCode, setCouponCode] = useState(location.state?.couponCode || '');
+    const [couponDiscount, setCouponDiscount] = useState(location.state?.couponDiscount || 0);
 
     // Check for spa services on initial load
     useEffect(() => {
@@ -66,20 +68,24 @@ const Booking = () => {
     };
 
     const handleBookingComplete = () => {
-        // Here you would typically send the booking data to your API
+        // Gửi bookingData + couponCode vào API đặt lịch
         console.log('Booking completed:', {
             services: bookingData.services,
             stylists: bookingData.selectedStylists,
             date: bookingData.date,
-            time: bookingData.time
+            time: bookingData.time,
+            couponCode,
+            couponDiscount
         });
-
+        // TODO: Gọi API đặt lịch ở đây, truyền couponCode
         // Redirect to confirmation page
         navigate('/booking-confirmation', {
             state: {
                 bookingData: {
                     ...bookingData,
-                    selectedStylists: bookingData.selectedStylists
+                    selectedStylists: bookingData.selectedStylists,
+                    couponCode,
+                    couponDiscount
                 }
             }
         });
@@ -94,6 +100,9 @@ const Booking = () => {
                     services={bookingData.services}
                     onRemoveService={handleRemoveService}
                     onNext={handleNextStep}
+                    couponCode={couponCode}
+                    couponDiscount={couponDiscount}
+                    hideTotal={couponDiscount > 0}
                 />
             )
         },
@@ -152,6 +161,8 @@ const Booking = () => {
                     time={bookingData.time}
                     onBack={handlePrevStep}
                     onConfirm={handleBookingComplete}
+                    couponDiscount={couponDiscount}
+                    couponCode={couponCode}
                 />
             )
         }
@@ -177,6 +188,35 @@ const Booking = () => {
                         </div>
                     ))}
                 </div>
+
+                {/* Tổng tiền và giảm giá ở bước 1 */}
+                {currentStep === 1 && (
+                    <div style={{ margin: '16px 0' }}>
+                        {(() => {
+                            const total = bookingData.services.reduce((sum, item) => sum + item.price, 0);
+                            if (couponDiscount && couponDiscount > 0) {
+                                const discountAmount = total * couponDiscount;
+                                const finalTotal = total - discountAmount;
+                                return (
+                                    <>
+                                        <div style={{ color: '#1677ff', fontWeight: 500 }}>
+                                            Đã giảm: -{discountAmount.toLocaleString()} VNĐ ({couponDiscount * 100}%)
+                                        </div>
+                                        <div style={{ color: 'green', fontWeight: 700 }}>
+                                            Tổng số tiền anh cần thanh toán: {finalTotal.toLocaleString()} VNĐ
+                                        </div>
+                                    </>
+                                );
+                            } else {
+                                return (
+                                    <div style={{ color: 'green', fontWeight: 700 }}>
+                                        Tổng số tiền anh cần thanh toán: {total.toLocaleString()} VNĐ
+                                    </div>
+                                );
+                            }
+                        })()}
+                    </div>
+                )}
 
                 {/* Current step content */}
                 <div className="booking-content">

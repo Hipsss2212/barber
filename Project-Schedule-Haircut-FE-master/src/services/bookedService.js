@@ -23,7 +23,13 @@ const useBookedService = () => {
             const result = await dispatch(actionToDispatch());
 
             if (actionToDispatch.fulfilled.match(result)) {
-                return result.payload;
+                // Map lại dữ liệu để luôn có couponDiscount và couponCode
+                const bookings = result.payload.map(b => ({
+                    ...b,
+                    couponDiscount: b.couponDiscount ?? b.discount ?? (b.coupon ? b.coupon.discount : 0) ?? 0,
+                    couponCode: b.couponCode ?? (b.coupon ? b.coupon.name : '') ?? ''
+                }));
+                return bookings;
             } else {
                 throw result.payload;
             }

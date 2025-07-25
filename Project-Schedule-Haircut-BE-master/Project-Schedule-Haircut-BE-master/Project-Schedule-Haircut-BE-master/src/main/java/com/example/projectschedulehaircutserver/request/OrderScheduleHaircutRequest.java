@@ -22,4 +22,6 @@ public class OrderScheduleHaircutRequest {
     private Integer comboId;
     private Set<Integer> serviceId;
     private Set<Integer> employeeId;
+    private String couponCode;
+    private Float couponDiscount;
 }

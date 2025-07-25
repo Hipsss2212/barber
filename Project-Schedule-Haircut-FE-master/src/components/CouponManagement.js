@@ -1,202 +1,233 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
-    Table, Button, Space, Input, message, Popconfirm, Modal, Form, InputNumber, DatePicker, Tag, Spin
+  Table,
+  Button,
+  Space,
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  DatePicker,
+  Switch,
+  Tag,
+  Spin
 } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons';
-import axiosClient from '../config/axios';
-import moment from 'moment';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  LockOutlined,
+  UnlockOutlined
+} from '@ant-design/icons';
+import dayjs from 'dayjs';
+import useCouponService from '../services/couponService';
 
 const CouponManagement = () => {
-    const [coupons, setCoupons] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingItem, setEditingItem] = useState(null);
-    const [form] = Form.useForm();
-    const [searchText, setSearchText] = useState('');
+  const {
+    getCoupons,
+    createNewCoupon,
+    updateExistingCoupon,
+    deleteCouponAction,
+    blockCouponAction,
+    unblockCouponAction,
+    couponState
+  } = useCouponService();
 
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            const res = await axiosClient.get('/admin/coupons');
-            setCoupons(res);
-        } catch (error) {
-            message.error('Lỗi khi tải dữ liệu: ' + (error?.message || ''));
-        }
-        setLoading(false);
-    };
+  // Dùng useRef để giữ instance form duy nhất, không gọi conditionally
+  const formRef = useRef(Form.useForm());
+  const [form] = formRef.current;
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
 
-    const handleSearch = (value) => setSearchText(value);
+  useEffect(() => {
+    getCoupons();
+    // eslint-disable-next-line
+  }, []);
 
-    const handleDelete = async (id) => {
-        setLoading(true);
-        try {
-            await axiosClient.delete(`/admin/coupons/${id}`);
-            message.success('Xóa coupon thành công');
-            fetchData();
-        } catch (error) {
-            message.error('Lỗi xóa coupon');
-        }
-        setLoading(false);
-    };
+  const handleAdd = () => {
+    setEditing(null);
+    form.resetFields();
+    setModalOpen(true);
+  };
 
-    const openAddModal = () => {
-        setEditingItem(null);
-        form.resetFields();
-        setIsModalOpen(true);
-    };
+  const handleEdit = (record) => {
+    setEditing(record);
+    form.setFieldsValue({
+      ...record,
+      discount: Number(record.discount) * 100 || 1, // Hiển thị % (nhân 100)
+      created_at: record.created_at ? dayjs(record.created_at) : undefined,
+      expiry: record.expiry ? dayjs(record.expiry) : undefined,
+      is_blocked: !!record.is_blocked
+    });
+    setModalOpen(true);
+  };
 
-    const openEditModal = (record) => {
-        setEditingItem(record);
-        form.setFieldsValue({
-            ...record,
-            expiry: moment(record.expiry),
-        });
-        setIsModalOpen(true);
-    };
+  const handleDelete = async (id) => {
+    await deleteCouponAction(id);
+    getCoupons();
+  };
 
-    const handleBlock = async (record, block) => {
-        setLoading(true);
-        try {
-            await axiosClient.patch(`/admin/coupons/${record.id}/block?block=${block}`);
-            message.success(block ? 'Đã khóa coupon' : 'Đã mở khóa coupon');
-            fetchData();
-        } catch {
-            message.error('Lỗi cập nhật trạng thái coupon');
-        }
-        setLoading(false);
-    };
+  const handleBlock = async (id) => {
+    await blockCouponAction(id);
+    getCoupons();
+  };
 
-    const handleModalOk = async () => {
-        setLoading(true);
-        try {
-            const values = await form.validateFields();
-            const data = { ...values, expiry: values.expiry.format() };
-            if (editingItem) {
-                await axiosClient.put(`/admin/coupons/${editingItem.id}`, data);
-                message.success('Cập nhật coupon thành công');
-            } else {
-                await axiosClient.post('/admin/coupons', data);
-                message.success('Tạo coupon thành công');
-            }
-            setIsModalOpen(false);
-            fetchData();
-        } catch (err) {
-            // validation error
-        }
-        setLoading(false);
-    };
+  const handleUnblock = async (id) => {
+    await unblockCouponAction(id);
+    getCoupons();
+  };
 
-    const filteredCoupons = coupons.filter(coupon =>
-        coupon.name?.toLowerCase().includes(searchText.toLowerCase())
-    );
+  const handleOk = async () => {
+    try {
+      // Debug: kiểm tra giá trị discount trước khi validate
+      const currentDiscount = form.getFieldValue('discount');
+      console.log('Current discount value:', currentDiscount, typeof currentDiscount);
+      
+      const values = await form.validateFields();
+      console.log('Form values:', values); // Debug
+      
+      // Đảm bảo discount là number
+      const discountValue = Number(values.discount);
+      if (isNaN(discountValue) || discountValue < 1 || discountValue > 100) {
+        throw new Error('Discount phải là số từ 1-100');
+      }
+      
+      const payload = {
+        ...values,
+        discount: discountValue / 100, // Chuyển về dạng số thực (0.1 = 10%)
+        created_at: values.created_at ? values.created_at.toISOString() : new Date().toISOString(),
+        expiry: values.expiry ? values.expiry.toISOString() : undefined,
+        is_blocked: !!values.is_blocked
+      };
+      console.log('Payload:', payload); // Debug
+      if (editing) {
+        await updateExistingCoupon(editing.id, payload);
+      } else {
+        await createNewCoupon(payload);
+      }
+      setModalOpen(false);
+      getCoupons();
+    } catch (err) {
+      console.error('Form validation error:', err); // Debug
+      console.error('Error details:', err.errorFields); // Debug chi tiết
+      // error đã được hiển thị qua message
+    }
+  };
 
-    const columns = [
-        { title: 'ID', dataIndex: 'id', key: 'id', width: 60 },
-        { title: 'Tên', dataIndex: 'name', key: 'name', width: 180 },
-        { title: 'Giảm giá (%)', dataIndex: 'discount', key: 'discount', width: 120, render: (v) => v * 100 },
-        { title: 'Ngày tạo', dataIndex: 'createdAt', key: 'createdAt', width: 160, render: (v) => moment(v).format('YYYY-MM-DD HH:mm') },
-        { title: 'Hết hạn', dataIndex: 'expiry', key: 'expiry', width: 160, render: (v) => moment(v).format('YYYY-MM-DD HH:mm') },
-        { title: 'Trạng thái', dataIndex: 'isBlocked', key: 'isBlocked', width: 120, render: (v) => v ? <Tag color="red">Đã khóa</Tag> : <Tag color="green">Đang mở</Tag> },
-        {
-            title: 'Thao tác',
-            key: 'action',
-            width: 220,
-            render: (_, record) => (
-                <Space>
-                    <Button icon={<EditOutlined />} onClick={() => openEditModal(record)} type="primary" size="small">Sửa</Button>
-                    <Popconfirm title="Xóa coupon này?" onConfirm={() => handleDelete(record.id)} okText="Xóa" cancelText="Hủy">
-                        <Button icon={<DeleteOutlined />} danger size="small">Xóa</Button>
-                    </Popconfirm>
-                    <Button
-                        icon={record.isBlocked ? <UnlockOutlined /> : <LockOutlined />}
-                        onClick={() => handleBlock(record, !record.isBlocked)}
-                        size="small"
-                        type={record.isBlocked ? 'default' : 'dashed'}
-                    >
-                        {record.isBlocked ? 'Mở khóa' : 'Khóa'}
-                    </Button>
-                </Space>
-            ),
-        },
-    ];
+  const columns = [
+    { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
+    { title: 'Tên', dataIndex: 'name', key: 'name' },
+    {
+      title: 'Giảm (%)',
+      dataIndex: 'discount',
+      key: 'discount',
+      render: v => (v * 100).toFixed(0) + '%'
+    },
+    {
+      title: 'Ngày tạo',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: v => v ? dayjs(v).format('DD/MM/YYYY HH:mm') : ''
+    },
+    {
+      title: 'Hết hạn',
+      dataIndex: 'expiry',
+      key: 'expiry',
+      render: v => v ? dayjs(v).format('DD/MM/YYYY HH:mm') : ''
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'is_blocked',
+      key: 'is_blocked',
+      render: v => v ? <Tag color="red">Blocked</Tag> : <Tag color="green">Active</Tag>
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      render: (_, record) => (
+        <Space>
+          <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.id)} />
+          {record.is_blocked ? (
+            <Button icon={<UnlockOutlined />} onClick={() => handleUnblock(record.id)} />
+          ) : (
+            <Button icon={<LockOutlined />} onClick={() => handleBlock(record.id)} />
+          )}
+        </Space>
+      )
+    }
+  ];
 
-    return (
-        <div className="management-container">
-            <div className="management-header">
-                <h2>Quản lý Coupon</h2>
-                <Space>
-                    <Input.Search
-                        placeholder="Tìm kiếm coupon..."
-                        prefix={<SearchOutlined />}
-                        style={{ width: 300 }}
-                        onSearch={handleSearch}
-                        allowClear
-                        disabled={loading}
-                    />
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={openAddModal}
-                        disabled={loading}
-                    >
-                        Thêm mới
-                    </Button>
-                </Space>
-            </div>
-            <Spin spinning={loading}>
-                <Table
-                    columns={columns}
-                    dataSource={filteredCoupons}
-                    rowKey="id"
-                    bordered
-                    pagination={{
-                        pageSize: 8,
-                        showSizeChanger: false,
-                        showTotal: (total) => `Tổng ${total} coupon`
-                    }}
-                    scroll={{ x: true }}
-                />
-            </Spin>
-            <Modal
-                title={editingItem ? 'Chỉnh sửa coupon' : 'Thêm coupon mới'}
-                open={isModalOpen}
-                onOk={handleModalOk}
-                onCancel={() => setIsModalOpen(false)}
-                okText={editingItem ? 'Cập nhật' : 'Thêm mới'}
-                cancelText="Hủy"
-                confirmLoading={loading}
-                width={500}
-            >
-                <Form form={form} layout="vertical">
-                    <Form.Item
-                        label="Tên coupon"
-                        name="name"
-                        rules={[{ required: true, message: 'Vui lòng nhập tên coupon!' }]}
-                    >
-                        <Input placeholder="Nhập tên coupon" />
-                    </Form.Item>
-                    <Form.Item
-                        label="Giảm giá (0-1)"
-                        name="discount"
-                        rules={[{ required: true, type: 'number', min: 0, max: 1, message: 'Nhập số từ 0 đến 1' }]}
-                    >
-                        <InputNumber step={0.01} style={{ width: '100%' }} />
-                    </Form.Item>
-                    <Form.Item
-                        label="Ngày hết hạn"
-                        name="expiry"
-                        rules={[{ required: true, message: 'Chọn ngày hết hạn!' }]}
-                    >
-                        <DatePicker showTime style={{ width: '100%' }} />
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </div>
-    );
+  return (
+    <div className="management-container">
+      <div className="management-header">
+        <h2>Quản lý Coupon</h2>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+          Thêm Coupon
+        </Button>
+      </div>
+      <Spin spinning={couponState.loading}>
+        <Table
+          dataSource={couponState.coupons}
+          columns={columns}
+          rowKey="id"
+          bordered
+          pagination={{ pageSize: 8 }}
+        />
+      </Spin>
+      <Modal
+        open={modalOpen}
+        onCancel={() => setModalOpen(false)}
+        onOk={handleOk}
+        title={editing ? 'Cập nhật Coupon' : 'Thêm Coupon'}
+        destroyOnClose={false}
+        okText={editing ? 'Cập nhật' : 'Thêm mới'}
+        cancelText="Hủy"
+        confirmLoading={couponState.loading}
+      >
+        <Form 
+          form={form} 
+          layout="vertical"
+          initialValues={{ discount: 1 }}
+        >
+          <Form.Item name="name" label="Tên" rules={[{ required: true, message: 'Nhập tên coupon' }]}><Input /></Form.Item>
+          <Form.Item 
+            name="discount" 
+            label="Giảm (%)" 
+            rules={[
+              { required: true, message: 'Nhập số % giảm (1-100)' },
+              { type: 'number', min: 1, max: 100, message: 'Nhập số % giảm (1-100)' },
+              {
+                validator: (_, value) => {
+                  const numValue = Number(value);
+                  if (isNaN(numValue)) {
+                    return Promise.reject(new Error('Phải là số'));
+                  }
+                  if (numValue < 1 || numValue > 100) {
+                    return Promise.reject(new Error('Phải từ 1-100'));
+                  }
+                  return Promise.resolve();
+                }
+              }
+            ]}
+          >
+            <InputNumber 
+              min={1} 
+              max={100} 
+              onChange={(value) => {
+                // Đảm bảo giá trị luôn là number
+                form.setFieldValue('discount', Number(value) || 1);
+              }}
+            />
+          </Form.Item>
+          <Form.Item name="created_at" label="Ngày tạo" rules={[{ required: true, message: 'Chọn ngày tạo' }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" /></Form.Item>
+          <Form.Item name="expiry" label="Hết hạn" rules={[{ required: true, message: 'Chọn ngày hết hạn' }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" /></Form.Item>
+          <Form.Item name="is_blocked" label="Blocked" valuePropName="checked"><Switch /></Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
 };
 
 export default CouponManagement; 

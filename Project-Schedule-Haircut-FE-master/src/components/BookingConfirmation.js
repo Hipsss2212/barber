@@ -5,11 +5,13 @@ import useOrderService from '../services/orderService';
 import { parse, format } from 'date-fns';
 import ClipLoader from 'react-spinners/ClipLoader';
 
-const BookingConfirmation = ({ services, stylists, date, time, onBack }) => {
+const BookingConfirmation = ({ services, stylists, date, time, onBack, couponDiscount = 0, couponCode = '' }) => {
     // stylists: {haircut: {...}, spa: {...}}
     // time: {haircut: '09:00', spa: '09:30'}
     const totalPrice = services.reduce((sum, service) => sum + service.price, 0);
     const totalTime = services.reduce((sum, service) => sum + (service.haircutTime || 0), 0);
+    const discountAmount = couponDiscount ? totalPrice * couponDiscount : 0;
+    const finalTotal = couponDiscount ? totalPrice - discountAmount : totalPrice;
     const { loading, error, successMessage } = useSelector(state => state.order);
     const { order } = useOrderService();
 
@@ -42,7 +44,12 @@ const BookingConfirmation = ({ services, stylists, date, time, onBack }) => {
 
     const handleConfirm = async () => {
         try {
-            await order(orderData);
+            const payload = {
+                ...orderData,
+                couponCode: couponCode || undefined,
+                couponDiscount: couponDiscount || undefined
+            };
+            await order(payload);
         } catch (error) {
             console.error('Error confirming booking:', error);
         }
@@ -65,8 +72,18 @@ const BookingConfirmation = ({ services, stylists, date, time, onBack }) => {
                 </ul>
                 <div className="service-total">
                     <span className="total-label">Tổng cộng:</span>
-                    <span className="total-price">{totalPrice.toLocaleString()}₫</span>
+                    <span className="total-price">{finalTotal.toLocaleString()}₫</span>
+                    {couponDiscount > 0 && (
+                        <span style={{ color: '#1677ff', marginLeft: 8 }}>
+                            (Đã giảm {discountAmount.toLocaleString()}₫, {couponDiscount * 100}%)
+                        </span>
+                    )}
                 </div>
+                {couponCode && couponDiscount > 0 && (
+                    <div style={{ color: '#1677ff', marginTop: 4 }}>
+                        Mã giảm giá: <b>{couponCode}</b>
+                    </div>
+                )}
             </div>
             <div className="time-total">
                 Tổng thời gian sử dụng dịch vụ: <strong>{totalTime} phút</strong>

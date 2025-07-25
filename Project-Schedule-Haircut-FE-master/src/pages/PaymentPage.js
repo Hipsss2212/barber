@@ -17,7 +17,7 @@ const PaymentPage = () => {
     const navigate = useNavigate();
     const [selectedMethod, setSelectedMethod] = useState('');
     const [loading, setLoading] = useState(false);
-    const { bookingDetails, serviceInfo } = location.state || {};
+    const { bookingDetails, serviceInfo, couponDiscount = 0, couponCode = '' } = location.state || {};
 
     const { handlePaymentResult: handleVnPayResult, initiatePayment: initiateVnPayPayment } = useVnPayService();
     const { handlePaymentResult: handleZaloPayResult, initiatePayment: initiateZaloPayPayment } = useZaloPayService();
@@ -48,6 +48,30 @@ const PaymentPage = () => {
         }
     }, [bookingDetails, serviceInfo, navigate]);
 
+    // Tự động kiểm tra các trường giảm giá trong bookingDetails
+    let detectedDiscount = 0;
+    let detectedCode = '';
+    if (typeof couponDiscount === 'number' && couponDiscount > 0) {
+        detectedDiscount = couponDiscount;
+    } else if (typeof bookingDetails?.couponDiscount === 'number' && bookingDetails.couponDiscount > 0) {
+        detectedDiscount = bookingDetails.couponDiscount;
+    } else if (typeof bookingDetails?.discount === 'number' && bookingDetails.discount > 0) {
+        detectedDiscount = bookingDetails.discount;
+    } else if (typeof bookingDetails?.coupon?.discount === 'number' && bookingDetails.coupon.discount > 0) {
+        detectedDiscount = bookingDetails.coupon.discount;
+    }
+    if (couponCode) {
+        detectedCode = couponCode;
+    } else if (bookingDetails?.couponCode) {
+        detectedCode = bookingDetails.couponCode;
+    } else if (bookingDetails?.coupon?.name) {
+        detectedCode = bookingDetails.coupon.name;
+    }
+    const total = bookingDetails?.totalPrice || 0;
+    const hasDiscount = detectedDiscount > 0;
+    const discountAmount = hasDiscount ? total * detectedDiscount : 0;
+    const finalTotal = hasDiscount ? total - discountAmount : total;
+
     const handlePayment = async () => {
         if (!selectedMethod) {
             toast.error('Vui lòng chọn phương thức thanh toán');
@@ -58,9 +82,9 @@ const PaymentPage = () => {
             setLoading(true);
 
             if (selectedMethod === 'vnpay') {
-                await initiateVnPayPayment(bookingDetails.totalPrice, bookingId);
+                await initiateVnPayPayment(total, bookingId);
             } else if (selectedMethod === 'zalopay') {
-                // await initiateZaloPayPayment(bookingDetails.totalPrice, bookingId);
+                // await initiateZaloPayPayment(total, bookingId);
                 toast.info('Phương thức ZaloPay đang được phát triển');
             } else if (selectedMethod === 'momo') {
                 // TODO: xử lý momo ở đây nếu bạn làm sau
@@ -118,7 +142,7 @@ const PaymentPage = () => {
                     <div className="info-row">
                         <span className="info-label">Tổng tiền:</span>
                         <div className="info-content">
-                            {bookingDetails?.totalPrice?.toLocaleString()} VNĐ
+                            <span style={{ color: 'green', fontWeight: 700 }}>{total.toLocaleString()} VNĐ</span>
                         </div>
                     </div>
                 </div>

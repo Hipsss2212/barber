@@ -9,6 +9,8 @@ import com.example.projectschedulehaircutserver.request.ActionOrderByCustomerReq
 import com.example.projectschedulehaircutserver.request.AllOrderEmployeeAndDateRequest;
 import com.example.projectschedulehaircutserver.request.OrderScheduleHaircutRequest;
 import com.example.projectschedulehaircutserver.service.email.EmailService;
+import com.example.projectschedulehaircutserver.service.coupons.CouponService;
+import com.example.projectschedulehaircutserver.entity.Coupons;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -31,11 +33,11 @@ public class OrderServiceImpl implements OrderService{
     private final EmployeeRepo employeeRepo;
     private final ComboRepo comboRepo;
     private final ServiceRepo serviceRepo;
-    private final CouponsRepo couponsRepo;
     private final CartItemRepo cartItemRepo;
     private final CartRepo cartRepo;
     private final CustomerRepo customerRepo;
     private final EmailService emailService;
+    private final CouponService couponService;
 
     // đặt lịch
     @Override
@@ -79,15 +81,18 @@ public class OrderServiceImpl implements OrderService{
                     }
                 }
 
-                Coupons coupons = couponsRepo.findCouponByCustomerId(customer.getId()).orElse(null);
-
-                BigDecimal discount = BigDecimal.ZERO;
-                if (coupons != null && coupons.getDiscount() != null) {
-                    discount = request.getTotalPrice()
-                            .multiply(BigDecimal.valueOf(coupons.getDiscount()));
+                BigDecimal originalPrice = request.getTotalPrice();
+                BigDecimal totalOrder = originalPrice;
+                String couponCode = request.getCouponCode();
+                Float couponDiscount = null;
+                if (couponCode != null && !couponCode.isEmpty()) {
+                    Coupons coupon = couponService.getCouponByName(couponCode).orElse(null);
+                    if (coupon != null && couponService.isValidCoupon(couponCode)) {
+                        couponDiscount = coupon.getDiscount();
+                        // Giảm giá theo phần trăm (couponDiscount dạng 0.1 = 10%)
+                        totalOrder = originalPrice.subtract(originalPrice.multiply(BigDecimal.valueOf(couponDiscount)));
+                    }
                 }
-                BigDecimal totalOrder = request.getTotalPrice().subtract(discount);
-
 
                 Orders orders = Orders.builder()
                         .orderDate(request.getOrderDate())
@@ -98,6 +103,8 @@ public class OrderServiceImpl implements OrderService{
                         .totalPrice(totalOrder)
                         .customer(customer)
                         .employees(employees)
+                        .couponCode(couponCode)
+                        .couponDiscount(couponDiscount)
                         .build();
 
                 Orders saveOrder = orderRepo.save(orders);
@@ -406,6 +413,9 @@ public class OrderServiceImpl implements OrderService{
             String serviceName = (String) row[6];
             BigDecimal totalPrice = (BigDecimal) row[7];
             Integer status = (Integer) row[8];
+            // Lấy couponCode và couponDiscount nếu có (giả sử row[9], row[10])
+            String couponCode = row.length > 9 ? (String) row[9] : null;
+            Float couponDiscount = row.length > 10 && row[10] != null ? ((Number) row[10]).floatValue() : null;
 
             String key = id + "-" + orderDate + "-" + orderStartTime + "-" + orderEndTime;
 
@@ -419,6 +429,8 @@ public class OrderServiceImpl implements OrderService{
                             .serviceName(new ArrayList<>())
                             .totalPrice(totalPrice)
                             .status(status)
+                            .couponCode(couponCode)
+                            .couponDiscount(couponDiscount)
                             .build()
             );
 

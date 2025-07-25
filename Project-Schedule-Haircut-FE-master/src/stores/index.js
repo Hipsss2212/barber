@@ -14,6 +14,7 @@ import staffReducer from './slices/staffSlice';
 import aiReducer from './slices/aiSlice';
 import managementReducer from './slices/managementSlice';
 import employeeProfileReducer from './slices/employeeProfileSlice';
+import couponReducer from './slices/couponSlice';
 
 const store = configureStore({
     reducer: {
@@ -32,6 +33,7 @@ const store = configureStore({
         ai: aiReducer,
         management: managementReducer,
         employeeProfile: employeeProfileReducer,
+        coupon: couponReducer,
     },
 });
 

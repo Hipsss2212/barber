@@ -4,7 +4,7 @@ import '../assets/css/BookingServicePicker.css';
 import useEmployeeService from '../services/employeeService';
 import { ClipLoader } from 'react-spinners';
 
-const BookingServicePicker = ({ services, onRemoveService, onNext }) => {
+const BookingServicePicker = ({ services, onRemoveService, onNext, couponCode, couponDiscount, hideTotal }) => {
     const { getEmployees, isLoading, error } = useEmployeeService();
 
     const handleNext = async () => {
@@ -28,6 +28,9 @@ const BookingServicePicker = ({ services, onRemoveService, onNext }) => {
                     <BookingSummary
                         services={services}
                         onRemoveService={onRemoveService}
+                        couponCode={couponCode}
+                        couponDiscount={couponDiscount}
+                        hideTotal={hideTotal}
                     />
                     <button
                         className="btn-next"

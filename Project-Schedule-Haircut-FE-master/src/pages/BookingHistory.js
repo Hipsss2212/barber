@@ -83,7 +83,9 @@ const BookingHistory = () => {
                     service: booking.serviceName.join(', '),
                     date: formatDate(booking.orderDate),
                     time: `${formatTime(booking.orderStartTime)} - ${formatTime(booking.orderEndTime)}`
-                }
+                },
+                couponDiscount: booking.couponDiscount || 0,
+                couponCode: booking.couponCode || ''
             }
         });
     };
@@ -209,7 +211,9 @@ const BookingHistory = () => {
                                         </div>
                                     </div>
                                     <div className="price-action">
-                                        <span>{booking.totalPrice.toLocaleString()} VNĐ</span>
+                                        <span style={{ color: 'green', fontWeight: 700 }}>
+                                            {booking.totalPrice.toLocaleString()} VNĐ
+                                        </span>
                                         {/* Chỉ hiện nút Thanh toán nếu trạng thái là 3 (chờ thanh toán) */}
                                         {booking.status === 3 && (
                                             <button

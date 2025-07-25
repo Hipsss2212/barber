@@ -23,7 +23,4 @@ public class Customer extends Account{
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     private Set<Comment> comments = new HashSet<>();
-
-    @ManyToMany(mappedBy = "customers", fetch = FetchType.LAZY)
-    private Set<Coupons> coupons = new HashSet<>();
 }
